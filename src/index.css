@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Geist:wght@500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #f9f9f9;
+  --color-surface-dim: #dadada;
+  --color-container-low: #f3f3f3;
+  --color-container: #eeeeee;
+  --color-container-high: #e8e8e8;
+  --color-container-highest: #e2e2e2;
+  --color-ink: #1a1c1c;
+  --color-muted: #525252;
+  --color-line: #E5E5E5;
+  --color-primary: #000000;
+}
+
+* { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Plus Jakarta Sans", ui-sans-system, system-ui, sans-serif;
+  background: #f9f9f9;
+  color: #1a1c1c;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+.container-wide { width: min(1280px, calc(100% - 48px)); margin-inline: auto; }
+@media (max-width: 1024px){ .container-wide{ width: min(1280px, calc(100% - 32px)); } }
+@media (max-width: 640px){ .container-wide{ width: min(1280px, calc(100% - 24px)); } }
+
+.label-sm { font-family: Geist, monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; line-height: 1; }
+.glass { background: rgba(249,249,249,0.86); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid #E5E5E5; }
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+}
