@@ -1,12 +1,13 @@
 import { Link, useLocation } from "react-router-dom"
 import { Home, FilePenLine, Search, Shield } from "lucide-react"
+import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 const links = [
-  { to: "/", label: "Beranda", icon: Home },
-  { to: "/laporan", label: "Kirim Laporan", icon: FilePenLine },
-  { to: "/lacak", label: "Lacak Status", icon: Search },
-  { to: "/admin/login", label: "Admin", icon: Shield },
+  { to: "/", label: "Beranda", short: "Beranda", icon: Home },
+  { to: "/laporan", label: "Kirim Laporan", short: "Laporan", icon: FilePenLine },
+  { to: "/lacak", label: "Lacak Status", short: "Lacak", icon: Search },
+  { to: "/admin/login", label: "Admin", short: "Admin", icon: Shield },
 ]
 
 export default function Navbar(){
@@ -43,15 +44,19 @@ export default function Navbar(){
         </div>
       </header>
 
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-[#E5E5E5] flex items-center justify-around h-[72px] px-2">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#f9f9f9]/80 supports-[backdrop-filter]:bg-[#f9f9f9]/75 backdrop-blur-[20px] backdrop-saturate-[180%] border-t border-black/[0.08] flex items-center justify-around px-2 pt-1" style={{ paddingBottom: "calc(4px + env(safe-area-inset-bottom))", height: "calc(49px + env(safe-area-inset-bottom))" }}>
         {links.map(l=>{
           const active=isActive(l.to)
           return (
-            <Link key={l.to} to={l.to} className={cn("flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition", active ? "text-black" : "text-[#7e7576]")}>
-              <span className={cn("w-9 h-9 grid place-items-center rounded-full border", active ? "bg-black text-white border-black" : "bg-white border-[#E5E5E5]")}>
-                <l.icon className="w-4 h-4" />
-              </span>
-              <span className="label-sm text-[9px] tracking-[0.04em] uppercase">{l.label.split(" ")[0]}</span>
+            <Link key={l.to} to={l.to} aria-current={active ? "page" : undefined} className="relative flex flex-col items-center justify-center gap-[3px] px-3 py-1 min-w-[64px] min-h-[44px] active:scale-[0.97] transition">
+              <motion.span
+                animate={{ scale: active ? 1 : 1 }}
+                transition={{ type: "spring", bounce: 0, duration: 0.22 }}
+                className={cn("grid place-items-center transition-colors", active ? "text-black" : "text-[#8E8E93]")}
+              >
+                <l.icon className="w-[24px] h-[24px]" strokeWidth={active ? 2.3 : 1.9} />
+              </motion.span>
+              <span className={cn("text-[10px] leading-none tracking-[0.02em] transition-colors", active ? "font-semibold text-black" : "font-normal text-[#8E8E93]")}>{(l as any).short}</span>
             </Link>
           )
         })}
