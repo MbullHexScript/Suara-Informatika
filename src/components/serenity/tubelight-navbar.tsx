@@ -1,6 +1,7 @@
-import { motion } from "framer-motion"
+import { motion, useMotionValue, animate } from "framer-motion"
 import { Link, useLocation } from "react-router-dom"
 import { Home, SquarePen, Search, Shield } from "lucide-react"
+import { useRef } from "react"
 
 export const tabs = [
   { name: "Beranda", url: "/", Icon: Home },
@@ -14,13 +15,39 @@ function useIsActive() {
   return (url: string) => (url === "/" ? pathname === "/" : pathname.startsWith(url))
 }
 
-/** Dock mengambang di bawah — HANYA untuk mobile (breakpoint md, bukan device) */
+function rubberband(overshoot: number, dimension: number, constant = 0.55) {
+  return (overshoot * dimension * constant) / (dimension + constant * Math.abs(overshoot))
+}
+
+/** Dock mengambang di bawah — HANYA untuk mobile (breakpoint md, bukan device)
+ *  Apple fluid: 1:1 drag, velocity handoff, rubber-band at edges, spring settle
+ */
 export function TubeLightNavbar() {
   const isActive = useIsActive()
+  const x = useMotionValue(0)
+  const ref = useRef<HTMLDivElement>(null)
 
   return (
     <div className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 z-50 flex justify-center select-none pointer-events-none w-full px-4">
-      <div className="pointer-events-auto flex items-center gap-1.5 glass-pill py-2 px-2 rounded-full mb-[calc(16px+env(safe-area-inset-bottom,0px))] w-full max-w-[380px] justify-between">
+      <motion.div
+        ref={ref}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.55}
+        dragMomentum={true}
+        dragTransition={{ bounceStiffness: 320, bounceDamping: 30, power: 0.22, timeConstant: 260 }}
+        onDragEnd={(_, info) => {
+          const velocity = info.velocity.x
+          const current = x.get()
+          const projected = current + (velocity / 1000) * 0.998 / (1 - 0.998) * 0.08
+          const clamped = Math.max(Math.min(projected, 18), -18)
+          const rubber = rubberband(clamped, 380, 0.55)
+          animate(x, rubber * 0.12, { type: "spring", bounce: 0, duration: 0.35 })
+          setTimeout(() => animate(x, 0, { type: "spring", bounce: 0.18, duration: 0.42 }), 120)
+        }}
+        style={{ x }}
+        className="pointer-events-auto flex items-center gap-1.5 glass-pill py-2 px-2 rounded-full mb-[calc(16px+env(safe-area-inset-bottom,0px))] w-full max-w-[380px] justify-between will-change-transform touch-pan-x"
+      >
         {tabs.map((tab) => {
           const active = isActive(tab.url)
           const Icon = tab.Icon
@@ -30,19 +57,24 @@ export function TubeLightNavbar() {
               to={tab.url}
               aria-current={active ? "page" : undefined}
               aria-label={tab.name}
-              className={`relative cursor-pointer flex-1 grid place-items-center py-3 rounded-full transition-colors duration-200 will-change-transform active:scale-[0.97] min-w-[52px] min-h-[52px] ${active ? "text-white" : "text-[#525252] hover:text-black"}`}
+              onPointerDown={(e) => (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)}
+              className={`relative cursor-pointer flex-1 grid place-items-center py-3 rounded-full will-change-transform active:scale-[0.97] min-w-[52px] min-h-[52px] ${active ? "text-white" : "text-[#525252] hover:text-black"}`}
               style={{ transition: "transform 100ms ease-out, color 160ms ease" }}
             >
               {active && (
                 <motion.div
                   layoutId="liquid-pill-mobile"
                   className="absolute inset-0 bg-black rounded-full"
-                  transition={{ type: "spring", stiffness: 350, damping: 28, mass: 0.9 }}
+                  transition={{ type: "spring", bounce: 0, duration: 0.35 }}
                 />
               )}
-              <span className="relative z-10">
+              <motion.span
+                className="relative z-10"
+                animate={{ scale: active ? 1.06 : 1 }}
+                transition={{ type: "spring", bounce: 0.18, duration: 0.32 }}
+              >
                 <Icon size={22} strokeWidth={active ? 2.5 : 2} />
-              </span>
+              </motion.span>
               {active && (
                 <motion.div
                   layoutId="tubelight-lamp-mobile"
@@ -57,7 +89,7 @@ export function TubeLightNavbar() {
             </Link>
           )
         })}
-      </div>
+      </motion.div>
     </div>
   )
 }
@@ -75,13 +107,15 @@ export function DesktopNav() {
             key={tab.name}
             to={tab.url}
             aria-current={active ? "page" : undefined}
-            className={`relative cursor-pointer text-[13px] font-semibold tracking-[-0.01em] px-4 py-2 rounded-full transition-colors duration-200 ${active ? "text-white" : "text-[#525252] hover:text-black"}`}
+            onPointerDown={(e) => (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)}
+            className={`relative cursor-pointer text-[13px] font-semibold tracking-[-0.01em] px-4 py-2 rounded-full will-change-transform active:scale-[0.97] ${active ? "text-white" : "text-[#525252] hover:text-black"}`}
+            style={{ transition: "transform 100ms ease-out" }}
           >
             {active && (
               <motion.div
                 layoutId="liquid-pill-desktop"
                 className="absolute inset-0 bg-black rounded-full"
-                transition={{ type: "spring", stiffness: 350, damping: 28, mass: 0.9 }}
+                transition={{ type: "spring", bounce: 0, duration: 0.35 }}
               />
             )}
             <span className="relative z-10">{tab.name}</span>

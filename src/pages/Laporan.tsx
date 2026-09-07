@@ -63,7 +63,7 @@ export default function Laporan(){
       <div className="bg-transparent min-h-[60vh]">
         <div className="container-wide py-10">
           <div className="max-w-[640px] mx-auto">
-            <div className="glass-card rounded-[16px] p-8 md:p-10 text-center space-y-5 will-change-transform">
+              <div className="glass-card rounded-[16px] p-8 md:p-10 text-center space-y-5 will-change-transform">
               <div className="w-14 h-14 rounded-full glass-pill grid place-items-center mx-auto"><CheckCircle2 className="w-7 h-7" /></div>
               <div className="space-y-2">
                 <h1 className="text-[22px] font-bold" style={{ letterSpacing:"-0.02em" }}>Laporan terkirim</h1>
@@ -71,11 +71,11 @@ export default function Laporan(){
               </div>
               <div className="rounded-[12px] bg-white/80 border border-black/[0.06] p-4 flex items-center gap-3 text-left backdrop-blur">
                 <span className="flex-1 font-mono text-[12px] break-all">{ticket}</span>
-                <button onClick={async()=>{ await navigator.clipboard.writeText(ticket); toast.success("Tiket disalin")}} className="shrink-0 inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-black text-white text-[11px] font-semibold active:scale-[0.97] will-change-transform" style={{ transition:"transform 100ms ease-out" }}>Salin <Copy className="w-3.5 h-3.5" /></button>
+                <button onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} onClick={async()=>{ await navigator.clipboard.writeText(ticket); toast.success("Tiket disalin")}} className="pressable shrink-0 inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-black text-white text-[11px] font-semibold will-change-transform">Salin <Copy className="w-3.5 h-3.5" /></button>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-                <a href={`/lacak/${ticket}`} className="h-10 px-5 rounded-full bg-black text-white text-[12px] font-semibold tracking-[0.04em] uppercase grid place-items-center active:scale-[0.97] will-change-transform" style={{ transition:"transform 100ms ease-out" }}>Lacak status</a>
-                <button onClick={()=>setTicket(null)} className="h-10 px-5 rounded-full glass-pill text-[12px] font-semibold active:scale-[0.97] will-change-transform" style={{ transition:"transform 100ms ease-out" }}>Kirim lagi</button>
+                <a href={`/lacak/${ticket}`} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className="pressable h-10 px-5 rounded-full bg-black text-white text-[12px] font-semibold tracking-[0.04em] uppercase grid place-items-center will-change-transform">Lacak status</a>
+                <button onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} onClick={()=>setTicket(null)} className="pressable h-10 px-5 rounded-full glass-pill text-[12px] font-semibold will-change-transform">Kirim lagi</button>
               </div>
               <p className="text-[11px] text-[#525252] inline-flex items-center gap-1.5 justify-center"><Shield className="w-3.5 h-3.5" /> Anonim penuh</p>
             </div>
@@ -86,7 +86,7 @@ export default function Laporan(){
   }
 
   return (
-    <div className="bg-[#f9f9f9]">
+    <div className="bg-transparent">
       <div className="container-wide py-6 md:py-10">
         <div className="grid md:grid-cols-[420px_1fr] gap-8 md:gap-10 items-start">
           <div className="space-y-6">
@@ -122,7 +122,7 @@ export default function Laporan(){
                 <div className="flex items-center gap-2 label-sm text-[#1a1c1c]"><span className="h-px w-6 bg-[#1a1c1c]" /> 01. JENIS LAPORAN</div>
                 <div className="grid grid-cols-3 gap-2 p-1.5 rounded-[12px] glass-pill">
                   {(["keluhan","kritik","saran"] as ReportType[]).map(v=>(
-                    <button key={v} type="button" onClick={()=>setType(v)} className={`h-10 rounded-[10px] text-[13px] font-semibold capitalize will-change-transform active:scale-[0.97] ${type===v?"bg-black text-white shadow-sm":"text-[#525252] hover:bg-white/60"}`} style={{ transition:"transform 100ms ease-out, background 160ms ease" }}>{v}</button>
+                    <button key={v} type="button" onClick={()=>setType(v)} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className={`pressable h-10 rounded-[10px] text-[13px] font-semibold capitalize will-change-transform ${type===v?"bg-black text-white shadow-sm":"text-[#525252] hover:bg-white/60"}`}>{v}</button>
                   ))}
                 </div>
               </div>
@@ -131,7 +131,7 @@ export default function Laporan(){
                 <div className="flex items-center gap-2 label-sm"><span className="h-px w-6 bg-[#1a1c1c]" /> 02. TARGET TUJUAN</div>
                 <div className="grid grid-cols-2 gap-2 p-1.5 rounded-[12px] glass-pill">
                   {(["jurusan","himpunan"] as ReportTarget[]).map(v=>(
-                    <button key={v} type="button" onClick={()=>setTarget(v)} className={`h-10 rounded-[10px] text-[13px] font-semibold capitalize will-change-transform active:scale-[0.97] ${target===v?"bg-white text-black shadow border border-black/[0.06]":"text-[#525252] hover:bg-white/60"}`} style={{ transition:"transform 100ms ease-out" }}>{v==="jurusan"?"Jurusan Informatika":"Himpunan (HMJ)"}</button>
+                    <button key={v} type="button" onClick={()=>setTarget(v)} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className={`pressable h-10 rounded-[10px] text-[13px] font-semibold capitalize will-change-transform ${target===v?"bg-white text-black shadow border border-black/[0.06]":"text-[#525252] hover:bg-white/60"}`}>{v==="jurusan"?"Jurusan Informatika":"Himpunan (HMJ)"}</button>
                   ))}
                 </div>
               </div>
@@ -190,7 +190,7 @@ export default function Laporan(){
               </div>
 
               <div className="pt-2 border-t border-black/[0.06] flex justify-end">
-                <button type="submit" disabled={loading} className="inline-flex items-center gap-2 h-11 px-7 rounded-full bg-black text-white text-[12px] font-semibold tracking-[0.04em] uppercase disabled:opacity-40 will-change-transform active:scale-[0.97]" style={{ transition:"transform 100ms ease-out" }}>
+                <button type="submit" disabled={loading} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className="pressable inline-flex items-center gap-2 h-11 px-7 rounded-full bg-black text-white text-[12px] font-semibold tracking-[0.04em] uppercase disabled:opacity-40 will-change-transform">
                   {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Mengirim...</> : <>Kirim Laporan <ArrowRight className="w-4 h-4" /></>}
                 </button>
               </div>

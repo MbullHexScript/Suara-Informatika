@@ -49,7 +49,7 @@ export default function Lacak(){
                 <Search className="w-4 h-4 text-[#7e7576] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input value={q} onChange={e=>setQ(e.target.value)} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" className="w-full h-11 pl-10 pr-3 rounded-[12px] bg-white/80 border border-black/[0.08] font-mono text-[12px] focus:outline-none focus:border-[#0A84FF] focus:ring-2 focus:ring-[#0A84FF]/20 backdrop-blur" onKeyDown={e=>{ if(e.key==="Enter") fetchOne(q)}} />
               </div>
-              <button onClick={()=>fetchOne(q)} disabled={loading} className="shrink-0 inline-flex items-center justify-center h-11 px-6 rounded-full bg-black text-white text-[12px] font-semibold tracking-[0.04em] uppercase disabled:opacity-40 will-change-transform active:scale-[0.97]" style={{ transition:"transform 100ms ease-out" }}>
+              <button onClick={()=>fetchOne(q)} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} disabled={loading} className="pressable shrink-0 inline-flex items-center justify-center h-11 px-6 rounded-full bg-black text-white text-[12px] font-semibold tracking-[0.04em] uppercase disabled:opacity-40 will-change-transform" style={{ transition:"transform 100ms ease-out" }}>
                 {loading? <Loader2 className="w-4 h-4 animate-spin" /> : "Cek"}
               </button>
             </div>
@@ -68,7 +68,7 @@ export default function Lacak(){
                 </div>
                 <div className="rounded-[12px] bg-white/70 border border-black/[0.06] p-3 flex items-center gap-2 backdrop-blur">
                   <span className="font-mono text-[11px] break-all flex-1">{data.id}</span>
-                  <button onClick={async()=>{ await navigator.clipboard.writeText(data.id); toast.success("Disalin")}} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-black text-white text-[11px] font-semibold will-change-transform active:scale-[0.97]" style={{ transition:"transform 100ms ease-out" }}><Copy className="w-3.5 h-3.5" /> Salin</button>
+                  <button onClick={async()=>{ await navigator.clipboard.writeText(data.id); toast.success("Disalin")}} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className="pressable inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-black text-white text-[11px] font-semibold will-change-transform"><Copy className="w-3.5 h-3.5" /> Salin</button>
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className={`rounded-[12px] p-3 border will-change-transform ${["baru","diproses","selesai"].includes(data.status)?"bg-white border-black":"bg-white/60 border-black/[0.06] opacity-60"}`}><p className="label-sm text-[10px]">DITERIMA</p><p className="text-[12px] font-bold mt-1">Baru</p></div>
