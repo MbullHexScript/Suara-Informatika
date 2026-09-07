@@ -35,7 +35,7 @@ export default function Lacak(){
   const m = data? (statusMeta[data.status]||statusMeta.baru) : null
 
   return (
-    <div className="bg-[#f9f9f9] pb-20 md:pb-0 min-h-[60vh]">
+    <div className="bg-[#f9f9f9] min-h-[60vh]">
       <div className="container-wide py-8 md:py-10">
         <div className="max-w-[640px] mx-auto space-y-6">
           <div className="text-center space-y-2">

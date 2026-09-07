@@ -61,12 +61,12 @@ export default function AdminDashboard(){
   }
   const keluar=async()=>{ await supabase.auth.signOut(); nav("/admin/login",{replace:true}) }
 
-  if(!checked) return <div className="min-h-screen grid place-items-center bg-[#f9f9f9]"><Loader2 className="w-6 h-6 animate-spin" /></div>
+  if(!checked) return <div className="grid place-items-center bg-[#f9f9f9] min-h-dvh"><Loader2 className="w-6 h-6 animate-spin" /></div>
 
   const total = data?.total ?? 0
 
   return (
-    <div className="min-h-screen bg-[#f9f9f9] flex">
+    <div className="bg-[#f9f9f9] flex min-h-dvh">
       <aside className="hidden md:flex w-[280px] bg-black text-white flex-col justify-between sticky top-0 h-screen">
         <div>
           <div className="p-7 flex items-center gap-3 border-b border-white/10">

@@ -23,7 +23,7 @@ export default function Home(){
   },[reduce])
 
   return (
-    <div ref={heroRef} className="bg-[#f9f9f9] pb-20 md:pb-0">
+    <div ref={heroRef} className="bg-[#f9f9f9]">
       <section className="container-wide pt-8 md:pt-12 pb-8 md:pb-10">
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
           <div className="space-y-5 md:space-y-6">

@@ -36,12 +36,12 @@ export default function AdminDetail(){
     }catch{ toast.error("Gagal simpan")} finally{ setSaving(false)}
   }
 
-  if(loading) return <div className="min-h-screen grid place-items-center bg-[#f9f9f9]"><Loader2 className="w-6 h-6 animate-spin" /></div>
+  if(loading) return <div className="grid place-items-center bg-[#f9f9f9] min-h-dvh"><Loader2 className="w-6 h-6 animate-spin" /></div>
   if(!data) return null
   const pill:Record<string,string>={baru:"bg-black text-white", diproses:"bg-white/70 text-[#1a1c1c] border border-black/[0.06] backdrop-blur", selesai:"bg-black text-white", ditolak:"bg-white/70 text-[#525252] border border-black/[0.06] backdrop-blur"}
 
   return (
-    <div className="min-h-screen bg-[#f9f9f9] pb-20 md:pb-0">
+    <div className="bg-[#f9f9f9] min-h-dvh">
       <div className="glass sticky top-0 z-10">
         <div className="container-wide h-[56px] flex items-center gap-3 will-change-[backdrop-filter]">
           <Link to="/admin" className="inline-flex items-center gap-2 h-9 px-4 rounded-full glass-pill text-[12px] font-semibold active:scale-[0.97] will-change-transform" style={{ transition:"transform 100ms ease-out" }}><ArrowLeft className="w-4 h-4" /> Kembali</Link>

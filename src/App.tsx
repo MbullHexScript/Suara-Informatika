@@ -11,9 +11,9 @@ import AdminDetail from "@/pages/AdminDetail"
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col bg-[#f9f9f9]">
+    <div className="flex flex-col bg-[#f9f9f9] min-h-screen" style={{ minHeight: "100dvh" } as React.CSSProperties}>
       <Navbar />
-      <main className="flex-1 pb-[calc(84px+env(safe-area-inset-bottom))] md:pb-0">{children}</main>
+      <main className="flex-1 pb-[var(--content-bottom)] md:pb-0">{children}</main>
       <footer className="hidden md:block bg-white border-t border-black/[0.06] py-6">
         <div className="container-wide flex items-center justify-between gap-3 label-sm text-[#525252]">
           <span className="font-bold tracking-[-0.01em] text-[#1a1c1c]">SUARA INFORMATIKA</span>

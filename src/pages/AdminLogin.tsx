@@ -20,7 +20,7 @@ export default function AdminLogin(){
     nav("/admin",{replace:true})
   }
   return (
-    <div className="min-h-screen bg-[#f9f9f9] text-[#1a1c1c] flex flex-col">
+    <div className="bg-[#f9f9f9] text-[#1a1c1c] flex flex-col min-h-dvh">
       <header className="p-4"><Link to="/" className="inline-flex items-center gap-2 label-sm px-4 h-9 rounded-full glass-pill active:scale-[0.97] will-change-transform" style={{ transition:"transform 100ms ease-out" }}><ArrowLeft className="w-4 h-4" /> Kembali</Link></header>
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-[400px] glass-card rounded-[16px] p-6 md:p-7 space-y-6 will-change-transform">

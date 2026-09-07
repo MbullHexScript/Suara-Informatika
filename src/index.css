@@ -14,8 +14,18 @@
   --color-accent: #0A84FF;
 }
 
+:root {
+  --nav-height: 64px;
+  --dock-height: 64px;
+  --content-bottom: calc(var(--dock-height) + 20px + env(safe-area-inset-bottom, 0px));
+}
+
 * { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
-html { scroll-behavior: smooth; }
+*,
+*::before,
+*::after { min-width: 0; }
+
+html { scroll-behavior: smooth; height: 100%; }
 body {
   font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   background: #f9f9f9;
@@ -25,39 +35,74 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "ss01" 1;
   line-height: 1.6;
+  min-height: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
 }
+img, video { max-width: 100%; height: auto; display: block; }
+
 .container-wide { width: min(1280px, calc(100% - 48px)); margin-inline: auto; }
 @media (max-width: 1024px){ .container-wide{ width: min(1280px, calc(100% - 32px)); } }
 @media (max-width: 640px){ .container-wide{ width: min(1280px, calc(100% - 24px)); } }
 
 .label-sm { font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; line-height: 1; }
 
+/* — Liquid Glass material — fallback first, enhanced via @supports — */
+.glass,
+.glass-pill,
+.glass-card {
+  border: 1px solid rgba(0,0,0,0.08);
+}
 .glass {
-  background: rgba(255,255,255,0.72);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  border-top: 1px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.92);
+  border-bottom-color: rgba(0,0,0,0.08);
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
 }
 .glass-pill {
-  background: rgba(255,255,255,0.72);
-  backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
-  border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 10px 36px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.6) inset;
+  background: rgba(255,255,255,0.94);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.7) inset;
 }
 .glass-card {
-  background: rgba(255,255,255,0.68);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(0,0,0,0.06);
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.06);
   box-shadow: 0 8px 32px rgba(0,0,0,0.06);
 }
 .hairline { border-color: rgba(0,0,0,0.08); }
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .glass {
+    background: rgba(255,255,255,0.72);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid rgba(255,255,255,0.45);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.55) inset, 0 1px 12px rgba(0,0,0,0.04);
+  }
+  .glass-pill {
+    background: rgba(255,255,255,0.72);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    box-shadow: 0 10px 36px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.6) inset;
+  }
+  .glass-card {
+    background: rgba(255,255,255,0.72);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.55) inset;
+  }
+  /* true isolate: blur layer must not be clipped — header/dock already isolate via stacking */
+  .glass, .glass-pill { isolation: auto; }
+}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
 }
 @media (prefers-reduced-transparency: reduce){
-  .glass, .glass-pill, .glass-card { background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .glass, .glass-pill, .glass-card {
+    background: #fff !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
 }

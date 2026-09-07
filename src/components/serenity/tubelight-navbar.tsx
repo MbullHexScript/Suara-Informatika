@@ -14,13 +14,13 @@ function useIsActive() {
   return (url: string) => (url === "/" ? pathname === "/" : pathname.startsWith(url))
 }
 
-/** Dock mengambang di bawah — HANYA untuk mobile (md:hidden) */
+/** Dock mengambang di bawah — HANYA untuk mobile (breakpoint md, bukan device) */
 export function TubeLightNavbar() {
   const isActive = useIsActive()
 
   return (
     <div className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 z-50 flex justify-center select-none pointer-events-none w-full px-4">
-      <div className="pointer-events-auto flex items-center gap-1.5 bg-white/85 dark:bg-neutral-900/85 backdrop-blur-xl border border-black/[0.08] dark:border-white/10 py-2 px-2 rounded-full shadow-[0_10px_36px_rgba(0,0,0,0.16)] mb-[calc(16px+env(safe-area-inset-bottom))] w-full max-w-[380px] justify-between">
+      <div className="pointer-events-auto flex items-center gap-1.5 glass-pill py-2 px-2 rounded-full mb-[calc(16px+env(safe-area-inset-bottom,0px))] w-full max-w-[380px] justify-between">
         {tabs.map((tab) => {
           const active = isActive(tab.url)
           const Icon = tab.Icon
@@ -62,7 +62,7 @@ export function TubeLightNavbar() {
   )
 }
 
-/** Nav links inline — HANYA untuk desktop, dipasang langsung di dalam header */
+/** Nav links inline — HANYA untuk desktop/tablet (breakpoint md), dipasang di header */
 export function DesktopNav() {
   const isActive = useIsActive()
 
