@@ -60,7 +60,7 @@ export default function Laporan(){
 
   if(ticket){
     return (
-      <div className="bg-[#f9f9f9] min-h-[60vh]">
+      <div className="bg-transparent min-h-[60vh]">
         <div className="container-wide py-10">
           <div className="max-w-[640px] mx-auto">
             <div className="glass-card rounded-[16px] p-8 md:p-10 text-center space-y-5 will-change-transform">

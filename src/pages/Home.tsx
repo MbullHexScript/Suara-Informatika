@@ -23,7 +23,7 @@ export default function Home(){
   },[reduce])
 
   return (
-    <div ref={heroRef} className="bg-[#f9f9f9]">
+    <div ref={heroRef} className="bg-transparent">
       <section className="container-wide pt-8 md:pt-12 pb-8 md:pb-10">
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
           <div className="space-y-5 md:space-y-6">
@@ -94,7 +94,7 @@ export default function Home(){
         </div>
       </section>
 
-      <section className="relative py-10 md:py-14 overflow-hidden bg-[#fafaf8] border-t border-black/[0.06]">
+      <section className="relative py-10 md:py-14 overflow-hidden bg-transparent border-t border-black/[0.06]">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full blur-[90px] opacity-[0.07]" style={{ background: "radial-gradient(circle at 40% 40%, #0A84FF 0%, transparent 70%)" }} />
           <div className="absolute -bottom-40 -right-32 w-[640px] h-[640px] rounded-full blur-[100px] opacity-[0.06]" style={{ background: "radial-gradient(circle at 60% 40%, #1a1c1c 0%, transparent 70%)" }} />
@@ -126,7 +126,7 @@ export default function Home(){
         </div>
       </section>
 
-      <section className="bg-[#eeeeee] py-10 md:py-14">
+      <section className="bg-transparent py-10 md:py-14 border-t border-black/[0.06]">
         <div className="container-wide">
           <div className="glass-card rounded-[16px] px-6 md:px-10 py-10 md:py-12 text-center space-y-4 max-w-[760px] mx-auto">
             <h2 className="text-[24px] md:text-[32px] font-[700]" style={{ letterSpacing: "-0.02em", lineHeight: 1.1 }}>Suara Anda Berharga</h2>

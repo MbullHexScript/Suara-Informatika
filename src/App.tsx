@@ -11,10 +11,10 @@ import AdminDetail from "@/pages/AdminDetail"
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col bg-[#f9f9f9] min-h-screen" style={{ minHeight: "100dvh" } as React.CSSProperties}>
+    <div className="flex flex-col bg-transparent min-h-screen" style={{ minHeight: "100dvh" } as React.CSSProperties}>
       <Navbar />
-      <main className="flex-1 pb-[var(--content-bottom)] md:pb-0">{children}</main>
-      <footer className="hidden md:block bg-white border-t border-black/[0.06] py-6">
+      <main className="flex-1 pb-[var(--content-bottom)] md:pb-0 bg-transparent">{children}</main>
+      <footer className="hidden md:block bg-white/80 backdrop-blur border-t border-black/[0.06] py-6">
         <div className="container-wide flex items-center justify-between gap-3 label-sm text-[#525252]">
           <span className="font-bold tracking-[-0.01em] text-[#1a1c1c]">SUARA INFORMATIKA</span>
           <span>© 2026 · Anonim · Aman · Transparan</span>
