@@ -14,8 +14,8 @@ export function TubeLightNavbar() {
   const isActive = (url: string) => (url === "/" ? pathname === "/" : pathname.startsWith(url))
 
   return (
-    <div className="z-50 flex justify-center select-none fixed bottom-0 sm:top-0 left-1/2 -translate-x-1/2 w-full sm:w-auto pointer-events-none">
-      <div className="pointer-events-auto flex items-center gap-1 sm:gap-1 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-black/[0.08] dark:border-white/10 py-1 px-1 rounded-full shadow-[0_10px_36px_rgba(0,0,0,0.14)] mb-[calc(10px+env(safe-area-inset-bottom))] mt-0 sm:mb-0 sm:mt-[14px]">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 flex justify-center select-none pointer-events-none w-full">
+      <div className="pointer-events-auto flex items-center gap-1 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-black/[0.08] dark:border-white/10 py-1 px-1 rounded-full shadow-[0_10px_36px_rgba(0,0,0,0.14)] mb-[calc(14px+env(safe-area-inset-bottom))]">
         {tabs.map((tab) => {
           const active = isActive(tab.url)
           const Icon = tab.Icon
