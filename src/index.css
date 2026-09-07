@@ -98,6 +98,21 @@ img, video { max-width: 100%; height: auto; display: block; }
   border: 1px solid rgba(0,0,0,0.06);
   box-shadow: 0 2px 10px rgba(0,0,0,0.05), 0 1px 0 rgba(255,255,255,0.8) inset;
 }
+.glass-feature__icon--red {
+  background: #fee2e2;
+  border-color: rgba(239,68,68,0.18);
+  color: #b91c1c;
+}
+.glass-feature__icon--yellow {
+  background: #fef9c3;
+  border-color: rgba(234,179,8,0.22);
+  color: #854d0e;
+}
+.glass-feature__icon--green {
+  background: #dcfce7;
+  border-color: rgba(34,197,94,0.18);
+  color: #15803d;
+}
 .hairline { border-color: rgba(0,0,0,0.08); }
 
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
@@ -138,6 +153,27 @@ img, video { max-width: 100%; height: auto; display: block; }
     backdrop-filter: blur(12px) saturate(160%);
     border: 1px solid rgba(255,255,255,0.58);
     box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.72) inset;
+  }
+  .glass-feature__icon--red {
+    background: rgba(254,226,226,0.82);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    backdrop-filter: blur(12px) saturate(160%);
+    border-color: rgba(239,68,68,0.22);
+    color: #b91c1c;
+  }
+  .glass-feature__icon--yellow {
+    background: rgba(254,249,195,0.86);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    backdrop-filter: blur(12px) saturate(160%);
+    border-color: rgba(234,179,8,0.24);
+    color: #854d0e;
+  }
+  .glass-feature__icon--green {
+    background: rgba(220,252,231,0.82);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    backdrop-filter: blur(12px) saturate(160%);
+    border-color: rgba(34,197,94,0.22);
+    color: #15803d;
   }
   .glass, .glass-pill { isolation: auto; }
 }

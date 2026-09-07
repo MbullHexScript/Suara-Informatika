@@ -108,17 +108,17 @@ export default function Home(){
 
           <div className="feat-grid grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 max-w-[1100px] mx-auto items-stretch">
             <div className="feat-card glass-feature rounded-[16px] p-6 flex flex-col will-change-transform">
-              <span className="glass-feature__icon w-10 h-10 rounded-full grid place-items-center shrink-0"><ShieldCheck className="w-5 h-5" /></span>
+              <span className="glass-feature__icon glass-feature__icon--red w-10 h-10 rounded-full grid place-items-center shrink-0"><ShieldCheck className="w-5 h-5" /></span>
               <h3 className="text-[15px] font-semibold mt-3" style={{ letterSpacing: "-0.01em" }}>Privasi Terjamin</h3>
               <p className="text-[13px] leading-[1.6] text-[#525252] mt-2">Tidak ada data pribadi (NIM, email, IP Address) yang disimpan. Identitas Anda 100% aman dan tidak dapat dilacak.</p>
             </div>
             <div className="feat-card glass-feature rounded-[16px] p-6 flex flex-col will-change-transform">
-              <span className="glass-feature__icon w-10 h-10 rounded-full grid place-items-center shrink-0"><Bell className="w-5 h-5" /></span>
+              <span className="glass-feature__icon glass-feature__icon--yellow w-10 h-10 rounded-full grid place-items-center shrink-0"><Bell className="w-5 h-5" /></span>
               <h3 className="text-[15px] font-semibold mt-3" style={{ letterSpacing: "-0.01em" }}>Notifikasi Langsung</h3>
               <p className="text-[13px] leading-[1.6] text-[#525252] mt-2">Setiap laporan yang masuk akan secara otomatis dikirimkan ke grup Telegram admin terkait untuk respon cepat.</p>
             </div>
             <div className="feat-card glass-feature rounded-[16px] p-6 flex flex-col will-change-transform">
-              <span className="glass-feature__icon w-10 h-10 rounded-full grid place-items-center shrink-0"><Layers3 className="w-5 h-5" /></span>
+              <span className="glass-feature__icon glass-feature__icon--green w-10 h-10 rounded-full grid place-items-center shrink-0"><Layers3 className="w-5 h-5" /></span>
               <h3 className="text-[15px] font-semibold mt-3" style={{ letterSpacing: "-0.01em" }}>Penanganan Terstruktur</h3>
               <p className="text-[13px] leading-[1.6] text-[#525252] mt-2">Lacak progres laporan Anda secara transparan. Admin akan memperbarui status secara berkala (Diproses / Selesai).</p>
             </div>
