@@ -6,8 +6,8 @@ export default function Navbar() {
     <>
       <header className="sticky top-0 z-40 glass">
         <div className="container-wide flex h-[64px] items-center justify-between gap-6 will-change-[backdrop-filter]">
-          <Link to="/" className="flex items-center gap-3 active:scale-[0.97] transition duration-100 shrink-0">
-            <span className="w-9 h-9 rounded bg-black text-white grid place-items-center text-[12px] font-extrabold tracking-tight">SI</span>
+          <Link to="/" className="flex items-center gap-2.5 active:scale-[0.97] transition duration-100 shrink-0">
+            <img src="/icon-web.jpg" alt="Suara Informatika" className="w-9 h-9 rounded-xl object-cover border border-black/[0.06] shadow-sm" width={36} height={36} />
             <span className="leading-none">
               <span className="block font-[700] text-[14px] tracking-[-0.02em] leading-[1.05]">SUARA</span>
               <span className="block font-[700] text-[14px] tracking-[-0.02em] leading-[1.05] -mt-0.5">INFORMATIKA</span>

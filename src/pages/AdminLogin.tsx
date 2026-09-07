@@ -25,7 +25,7 @@ export default function AdminLogin(){
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-[400px] glass-card rounded-[16px] p-6 md:p-7 space-y-6 will-change-transform">
           <div className="space-y-2">
-            <div className="w-10 h-10 rounded-[12px] bg-black grid place-items-center text-white text-[12px] font-extrabold">SI</div>
+            <img src="/icon-web.jpg" alt="Suara Informatika" className="w-10 h-10 rounded-[12px] object-cover border border-black/[0.06]" width={40} height={40} />
             <h1 className="text-[22px] font-[800]" style={{ letterSpacing:"-0.02em" }}>Masuk admin</h1>
             <p className="text-[13px] leading-[1.6] text-[#525252]">Kelola laporan anonim mahasiswa.</p>
           </div>

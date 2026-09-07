@@ -70,7 +70,7 @@ export default function AdminDashboard(){
       <aside className="hidden md:flex w-[280px] bg-black text-white flex-col justify-between sticky top-0 h-screen">
         <div>
           <div className="p-7 flex items-center gap-3 border-b border-white/10">
-            <span className="w-10 h-10 rounded bg-white text-black grid place-items-center font-extrabold text-[12px]">SI</span>
+            <img src="/icon-web.jpg" alt="Suara Informatika" className="w-10 h-10 rounded-xl object-cover border border-white/15" width={40} height={40} />
             <div className="leading-none">
               <p className="font-bold text-[12px] tracking-[0.06em]">SUARA</p>
               <p className="font-bold text-[12px] tracking-[0.06em]">INFORMATIKA</p>
@@ -100,7 +100,7 @@ export default function AdminDashboard(){
         <div className="md:hidden sticky top-0 z-30 glass">
           <div className="h-[56px] flex items-center justify-between px-4 will-change-[backdrop-filter]">
             <div className="flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded bg-black text-white grid place-items-center font-extrabold text-[11px]">SI</span>
+              <img src="/icon-web.jpg" alt="Suara Informatika" className="w-8 h-8 rounded-lg object-cover border border-black/[0.06]" width={32} height={32} />
               <span className="leading-none">
                 <span className="block text-[12px] font-bold tracking-[-0.01em] leading-[1.05]">SUARA</span>
                 <span className="block text-[12px] font-bold tracking-[-0.01em] leading-[1.05] -mt-0.5">INFORMATIKA</span>
