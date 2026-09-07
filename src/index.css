@@ -86,12 +86,17 @@ img, video { max-width: 100%; height: auto; display: block; }
   background: #ffffff;
   border: 1px solid rgba(0,0,0,0.06);
   box-shadow: 0 4px 24px rgba(0,0,0,0.05);
-  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
 }
 .glass-feature:hover {
   transform: translateY(-2px);
   border-color: rgba(0,0,0,0.08);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.6) inset;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.6) inset;
+}
+.glass-feature__icon {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05), 0 1px 0 rgba(255,255,255,0.8) inset;
 }
 .hairline { border-color: rgba(0,0,0,0.08); }
 
@@ -116,16 +121,23 @@ img, video { max-width: 100%; height: auto; display: block; }
     box-shadow: 0 8px 32px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.55) inset;
   }
   .glass-feature {
-    background: rgba(255,255,255,0.58);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255,255,255,0.55);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.55) inset;
+    background: rgba(255,255,255,0.42);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.58);
+    box-shadow: 0 10px 36px rgba(0,0,0,0.09), 0 1px 0 rgba(255,255,255,0.72) inset;
   }
   .glass-feature:hover {
-    background: rgba(255,255,255,0.68);
-    border-color: rgba(255,255,255,0.65);
-    box-shadow: 0 12px 36px rgba(0,0,0,0.10), 0 1px 0 rgba(255,255,255,0.7) inset;
+    background: rgba(255,255,255,0.54);
+    border-color: rgba(255,255,255,0.68);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.11), 0 1px 0 rgba(255,255,255,0.78) inset;
+  }
+  .glass-feature__icon {
+    background: rgba(255,255,255,0.62);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.58);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.72) inset;
   }
   .glass, .glass-pill { isolation: auto; }
 }
