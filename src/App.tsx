@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { Toaster } from "sonner"
 import Navbar from "@/components/layout/Navbar"
 import Home from "@/pages/Home"
@@ -12,8 +13,8 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-[#f9f9f9]">
       <Navbar />
-      <main className="flex-1">{children}</main>
-      <footer className="hidden md:block bg-white border-t border-[#E5E5E5] py-6">
+      <main className="flex-1 pb-[calc(84px+env(safe-area-inset-bottom))] md:pb-0">{children}</main>
+      <footer className="hidden md:block bg-white border-t border-black/[0.06] py-6">
         <div className="container-wide flex items-center justify-between gap-3 label-sm text-[#525252]">
           <span className="font-bold tracking-[-0.01em] text-[#1a1c1c]">SUARA INFORMATIKA</span>
           <span>© 2026 · Anonim · Aman · Transparan</span>
@@ -23,20 +24,51 @@ function Layout({ children }: { children: React.ReactNode }) {
   )
 }
 
+function PageMotion({ children }: { children: React.ReactNode }) {
+  const reduce = useReducedMotion()
+  if (reduce) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2, ease: "easeOut" }}>
+        {children}
+      </motion.div>
+    )
+  }
+  return (
+    <motion.div
+      initial={{ y: 8, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: -6, opacity: 0 }}
+      transition={{ type: "spring", bounce: 0, duration: 0.35 } as any}
+      className="will-change-transform"
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+function AnimatedRoutes() {
+  const location = useLocation()
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Layout><PageMotion><Home /></PageMotion></Layout>} />
+        <Route path="/laporan" element={<Layout><PageMotion><Laporan /></PageMotion></Layout>} />
+        <Route path="/lacak" element={<Layout><PageMotion><Lacak /></PageMotion></Layout>} />
+        <Route path="/lacak/:id" element={<Layout><PageMotion><Lacak /></PageMotion></Layout>} />
+        <Route path="/admin/login" element={<PageMotion><AdminLogin /></PageMotion>} />
+        <Route path="/admin" element={<PageMotion><AdminDashboard /></PageMotion>} />
+        <Route path="/admin/laporan/:id" element={<PageMotion><AdminDetail /></PageMotion>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AnimatePresence>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Toaster richColors position="top-center" />
-      <Routes>
-        <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/laporan" element={<Layout><Laporan /></Layout>} />
-        <Route path="/lacak" element={<Layout><Lacak /></Layout>} />
-        <Route path="/lacak/:id" element={<Layout><Lacak /></Layout>} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/laporan/:id" element={<AdminDetail />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <AnimatedRoutes />
     </BrowserRouter>
   )
 }

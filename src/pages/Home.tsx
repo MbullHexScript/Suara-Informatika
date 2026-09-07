@@ -27,43 +27,43 @@ export default function Home(){
       <section className="container-wide pt-8 md:pt-12 pb-8 md:pb-10">
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
           <div className="space-y-5 md:space-y-6">
-            <div className="h-kicker inline-flex items-center gap-2 rounded-full bg-white border border-[#E5E5E5] px-3 py-1.5">
+            <div className="h-kicker inline-flex items-center gap-2 glass-pill px-3.5 py-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-black" />
               <span className="label-sm text-[#1a1c1c]">PLATFORM ASPIRASI RESMI</span>
             </div>
 
-            <h1 className="h-title font-[800] tracking-[-0.02em] leading-[1.05] text-[30px] md:text-[48px]">
+            <h1 className="h-title font-[800] leading-[1.05] text-[30px] md:text-[48px]" style={{ letterSpacing: "-0.02em", lineHeight: 1.05 }}>
               Sampaikan Aspirasi Anda<br/>Secara <span className="font-[800]">Anonim & Aman</span>
             </h1>
 
-            <p className="h-sub text-[14px] md:text-[16px] leading-[1.6] text-[#525252] max-w-[520px]">
+            <p className="h-sub text-[16px] leading-[1.6] text-[#525252] max-w-[520px]">
               Wadah resmi penyampaian keluhan, kritik, dan saran untuk jurusan dan himpunan Informatika. Bebas tanpa login, tanpa identitas.
             </p>
 
             <div className="h-cta flex flex-wrap gap-3 pt-1">
-              <Link to="/laporan" className="inline-flex h-[44px] px-6 rounded-full bg-black text-white text-[12px] font-semibold tracking-[0.04em] uppercase items-center gap-2 hover:opacity-90 active:scale-[0.98] transition">
+              <Link to="/laporan" className="inline-flex h-[44px] px-6 rounded-full bg-black text-white text-[12px] font-semibold tracking-[0.04em] uppercase items-center gap-2 active:scale-[0.97] will-change-transform" style={{ transition: "transform 100ms ease-out" }}>
                 Buat Laporan Sekarang <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link to="/lacak" className="inline-flex h-[44px] px-6 rounded-full bg-[#eeeeee] text-[#1a1c1c] text-[12px] font-semibold tracking-[0.04em] uppercase items-center justify-center hover:bg-[#e8e8e8] transition">
+              <Link to="/lacak" className="inline-flex h-[44px] px-6 rounded-full glass text-[#1a1c1c] text-[12px] font-semibold tracking-[0.04em] uppercase items-center justify-center active:scale-[0.97] will-change-transform" style={{ transition: "transform 100ms ease-out" }}>
                 Lacak Status
               </Link>
             </div>
 
-            <div className="flex items-stretch gap-6 pt-4 border-t border-[#E5E5E5] mt-2">
+            <div className="flex items-stretch gap-6 pt-4 border-t border-black/[0.08] mt-2">
               <div>
-                <p className="text-[20px] font-[700] leading-none">24/7</p>
+                <p className="text-[20px] font-[700] leading-none" style={{ letterSpacing: "-0.01em" }}>24/7</p>
                 <p className="label-sm text-[#525252] mt-1">Akses Sistem</p>
               </div>
-              <div className="w-px bg-[#E5E5E5]" />
+              <div className="w-px bg-black/[0.08]" />
               <div>
-                <p className="text-[20px] font-[700] leading-none">100%</p>
+                <p className="text-[20px] font-[700] leading-none" style={{ letterSpacing: "-0.01em" }}>100%</p>
                 <p className="label-sm text-[#525252] mt-1">Anonimitas</p>
               </div>
             </div>
           </div>
 
           <div className="relative h-[280px] md:h-[420px] hidden md:block">
-            <div className="h-mock absolute inset-0 rounded-[16px] overflow-hidden border border-[#E5E5E5] bg-[#1a1c1c] shadow-[0_20px_60px_rgba(0,0,0,0.18)]" style={{ transform:"perspective(1200px) rotateY(-6deg) rotateX(2deg) rotateZ(0.6deg)" }}>
+            <div className="h-mock absolute inset-0 rounded-[16px] overflow-hidden border border-white/40 bg-[#1a1c1c] shadow-[0_20px_60px_rgba(0,0,0,0.18)] will-change-transform" style={{ transform:"perspective(1200px) rotateY(-6deg) rotateX(2deg) rotateZ(0.6deg)" }}>
               <img src="/foto-hero.jpg" alt="" className="w-full h-full object-cover opacity-90" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
               <div className="absolute top-3 left-3 right-3 flex items-center gap-1.5 opacity-60">
@@ -72,9 +72,10 @@ export default function Home(){
                 <span className="w-2.5 h-2.5 rounded-full bg-[#28c940]" />
                 <span className="ml-3 text-[10px] text-white/70 hidden md:inline">suarainformatika — aman & anonim</span>
               </div>
+              <div className="absolute inset-x-0 top-0 h-px bg-white/30" />
             </div>
-            <div className="absolute -bottom-2 -left-4 bg-white border border-[#E5E5E5] rounded-[12px] px-4 py-3 flex items-center gap-3 shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
-              <span className="w-8 h-8 rounded-full bg-[#f3f3f3] border border-[#E5E5E5] grid place-items-center"><CheckCircle2 className="w-4 h-4" /></span>
+            <div className="absolute -bottom-2 -left-4 glass-card rounded-[12px] px-4 py-3 flex items-center gap-3 will-change-transform">
+              <span className="w-8 h-8 rounded-full bg-white border border-black/[0.06] grid place-items-center"><CheckCircle2 className="w-4 h-4" /></span>
               <div>
                 <p className="text-[12px] font-semibold leading-none">Laporan Diterima</p>
                 <p className="text-[11px] text-[#525252]">Baru saja</p>
@@ -82,10 +83,10 @@ export default function Home(){
             </div>
           </div>
 
-          <div className="md:hidden rounded-[16px] overflow-hidden border border-[#E5E5E5] relative h-[220px]">
+          <div className="md:hidden rounded-[16px] overflow-hidden border border-white/40 relative h-[220px] shadow-[0_12px_32px_rgba(0,0,0,0.10)]">
             <img src="/foto-hero.jpg" alt="" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/30" />
-            <div className="absolute bottom-3 left-3 inline-flex items-center gap-2 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full border border-[#E5E5E5]">
+            <div className="absolute bottom-3 left-3 inline-flex items-center gap-2 glass-pill px-3 py-1.5">
               <span className="w-2 h-2 rounded-full bg-black" />
               <span className="label-sm text-[10px]">PLATFORM ASPIRASI TERENKRIPSI</span>
             </div>
@@ -93,27 +94,27 @@ export default function Home(){
         </div>
       </section>
 
-      <section className="bg-white border-t border-[#E5E5E5] py-10 md:py-14">
+      <section className="bg-white border-t border-black/[0.06] py-10 md:py-14">
         <div className="container-wide">
           <div className="text-center max-w-[640px] mx-auto mb-10">
-            <h2 className="text-[24px] md:text-[32px] font-[700] tracking-[-0.02em]">Kenapa Menggunakan AspirasiIF?</h2>
+            <h2 className="text-[24px] md:text-[32px] font-[700]" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>Kenapa Menggunakan AspirasiIF?</h2>
             <p className="text-[14px] leading-[1.6] text-[#525252] mt-3">Sistem yang dirancang khusus untuk memastikan kenyamanan dan keamanan mahasiswa dalam beraspirasi.</p>
           </div>
 
           <div className="feat-grid grid md:grid-cols-3 gap-5 md:gap-6 max-w-[1100px] mx-auto items-start">
-            <div className="feat-card rounded-[16px] bg-[#f3f3f3] border border-[#E5E5E5] p-6 space-y-3">
-              <span className="w-10 h-10 rounded-full bg-[#e2e2e2] border border-[#E5E5E5] grid place-items-center"><ShieldCheck className="w-5 h-5" /></span>
-              <h3 className="text-[15px] font-semibold">Privasi Terjamin</h3>
+            <div className="feat-card glass-card rounded-[16px] p-6 space-y-3 will-change-transform">
+              <span className="w-10 h-10 rounded-full bg-white border border-black/[0.06] grid place-items-center shadow-sm"><ShieldCheck className="w-5 h-5" /></span>
+              <h3 className="text-[15px] font-semibold" style={{ letterSpacing: "-0.01em" }}>Privasi Terjamin</h3>
               <p className="text-[13px] leading-[1.6] text-[#525252]">Tidak ada data pribadi (NIM, email, IP Address) yang disimpan. Identitas Anda 100% aman dan tidak dapat dilacak.</p>
             </div>
-            <div className="feat-card rounded-[16px] bg-[#f3f3f3] border border-[#E5E5E5] p-6 space-y-3 md:translate-y-6">
-              <span className="w-10 h-10 rounded-full bg-[#e2e2e2] border border-[#E5E5E5] grid place-items-center"><Bell className="w-5 h-5" /></span>
-              <h3 className="text-[15px] font-semibold">Notifikasi Langsung</h3>
+            <div className="feat-card glass-card rounded-[16px] p-6 space-y-3 md:translate-y-6 will-change-transform">
+              <span className="w-10 h-10 rounded-full bg-white border border-black/[0.06] grid place-items-center shadow-sm"><Bell className="w-5 h-5" /></span>
+              <h3 className="text-[15px] font-semibold" style={{ letterSpacing: "-0.01em" }}>Notifikasi Langsung</h3>
               <p className="text-[13px] leading-[1.6] text-[#525252]">Setiap laporan yang masuk akan secara otomatis dikirimkan ke grup Telegram admin terkait untuk respon cepat.</p>
             </div>
-            <div className="feat-card rounded-[16px] bg-[#f3f3f3] border border-[#E5E5E5] p-6 space-y-3 md:translate-y-12">
-              <span className="w-10 h-10 rounded-full bg-[#e2e2e2] border border-[#E5E5E5] grid place-items-center"><Layers3 className="w-5 h-5" /></span>
-              <h3 className="text-[15px] font-semibold">Penanganan Terstruktur</h3>
+            <div className="feat-card glass-card rounded-[16px] p-6 space-y-3 md:translate-y-12 will-change-transform">
+              <span className="w-10 h-10 rounded-full bg-white border border-black/[0.06] grid place-items-center shadow-sm"><Layers3 className="w-5 h-5" /></span>
+              <h3 className="text-[15px] font-semibold" style={{ letterSpacing: "-0.01em" }}>Penanganan Terstruktur</h3>
               <p className="text-[13px] leading-[1.6] text-[#525252]">Lacak progres laporan Anda secara transparan. Admin akan memperbarui status secara berkala (Diproses / Selesai).</p>
             </div>
           </div>
@@ -121,12 +122,14 @@ export default function Home(){
       </section>
 
       <section className="bg-[#eeeeee] py-10 md:py-14">
-        <div className="container-wide text-center space-y-4">
-          <h2 className="text-[24px] md:text-[32px] font-[700] tracking-[-0.02em]">Suara Anda Berharga</h2>
-          <p className="text-[14px] leading-[1.6] text-[#525252] max-w-[600px] mx-auto">Bantu kami membangun lingkungan akademik yang lebih baik. Satu laporan dari Anda bisa membawa perubahan besar.</p>
-          <Link to="/laporan" className="inline-flex h-[48px] px-8 rounded-full bg-black text-white text-[12px] font-semibold tracking-[0.05em] uppercase items-center hover:opacity-90 active:scale-[0.98] transition mt-2">
-            Buat Laporan Sekarang
-          </Link>
+        <div className="container-wide">
+          <div className="glass-card rounded-[16px] px-6 md:px-10 py-10 md:py-12 text-center space-y-4 max-w-[760px] mx-auto">
+            <h2 className="text-[24px] md:text-[32px] font-[700]" style={{ letterSpacing: "-0.02em", lineHeight: 1.1 }}>Suara Anda Berharga</h2>
+            <p className="text-[14px] leading-[1.6] text-[#525252] max-w-[600px] mx-auto">Bantu kami membangun lingkungan akademik yang lebih baik. Satu laporan dari Anda bisa membawa perubahan besar.</p>
+            <Link to="/laporan" className="inline-flex h-[48px] px-8 rounded-full bg-black text-white text-[12px] font-semibold tracking-[0.05em] uppercase items-center active:scale-[0.97] will-change-transform mt-2" style={{ transition: "transform 100ms ease-out" }}>
+              Buat Laporan Sekarang
+            </Link>
+          </div>
         </div>
       </section>
     </div>
