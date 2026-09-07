@@ -70,6 +70,17 @@ img, video { max-width: 100%; height: auto; display: block; }
   border-color: rgba(0,0,0,0.06);
   box-shadow: 0 8px 32px rgba(0,0,0,0.06);
 }
+.glass-feature {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+.glass-feature:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0,0,0,0.08);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.6) inset;
+}
 .hairline { border-color: rgba(0,0,0,0.08); }
 
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
@@ -91,6 +102,18 @@ img, video { max-width: 100%; height: auto; display: block; }
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
     box-shadow: 0 8px 32px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.55) inset;
+  }
+  .glass-feature {
+    background: rgba(255,255,255,0.62);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.55) inset;
+  }
+  .glass-feature:hover {
+    background: rgba(255,255,255,0.72);
+    border-color: rgba(255,255,255,0.65);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.10), 0 1px 0 rgba(255,255,255,0.7) inset;
   }
   /* true isolate: blur layer must not be clipped — header/dock already isolate via stacking */
   .glass, .glass-pill { isolation: auto; }

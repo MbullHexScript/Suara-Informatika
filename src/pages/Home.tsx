@@ -94,28 +94,33 @@ export default function Home(){
         </div>
       </section>
 
-      <section className="bg-white border-t border-black/[0.06] py-10 md:py-14">
-        <div className="container-wide">
-          <div className="text-center max-w-[640px] mx-auto mb-10">
+      <section className="relative py-10 md:py-14 overflow-hidden bg-[#fafaf8] border-t border-black/[0.06]">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full blur-[90px] opacity-[0.07]" style={{ background: "radial-gradient(circle at 40% 40%, #0A84FF 0%, transparent 70%)" }} />
+          <div className="absolute -bottom-40 -right-32 w-[640px] h-[640px] rounded-full blur-[100px] opacity-[0.06]" style={{ background: "radial-gradient(circle at 60% 40%, #1a1c1c 0%, transparent 70%)" }} />
+          <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: "radial-gradient(rgba(0,0,0,0.8) 1px, transparent 1px)", backgroundSize: "22px 22px" }} />
+        </div>
+        <div className="container-wide relative">
+          <div className="text-center max-w-[640px] mx-auto mb-10 md:mb-12">
             <h2 className="text-[24px] md:text-[32px] font-[700]" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>Kenapa Menggunakan AspirasiIF?</h2>
             <p className="text-[14px] leading-[1.6] text-[#525252] mt-3">Sistem yang dirancang khusus untuk memastikan kenyamanan dan keamanan mahasiswa dalam beraspirasi.</p>
           </div>
 
-          <div className="feat-grid grid md:grid-cols-3 gap-5 md:gap-6 max-w-[1100px] mx-auto items-start">
-            <div className="feat-card glass-card rounded-[16px] p-6 space-y-3 will-change-transform">
-              <span className="w-10 h-10 rounded-full bg-white border border-black/[0.06] grid place-items-center shadow-sm"><ShieldCheck className="w-5 h-5" /></span>
-              <h3 className="text-[15px] font-semibold" style={{ letterSpacing: "-0.01em" }}>Privasi Terjamin</h3>
-              <p className="text-[13px] leading-[1.6] text-[#525252]">Tidak ada data pribadi (NIM, email, IP Address) yang disimpan. Identitas Anda 100% aman dan tidak dapat dilacak.</p>
+          <div className="feat-grid grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 max-w-[1100px] mx-auto items-stretch">
+            <div className="feat-card glass-feature rounded-[16px] p-6 flex flex-col will-change-transform">
+              <span className="w-10 h-10 rounded-full bg-white/80 border border-black/[0.06] grid place-items-center shadow-sm shrink-0"><ShieldCheck className="w-5 h-5" /></span>
+              <h3 className="text-[15px] font-semibold mt-3" style={{ letterSpacing: "-0.01em" }}>Privasi Terjamin</h3>
+              <p className="text-[13px] leading-[1.6] text-[#525252] mt-2">Tidak ada data pribadi (NIM, email, IP Address) yang disimpan. Identitas Anda 100% aman dan tidak dapat dilacak.</p>
             </div>
-            <div className="feat-card glass-card rounded-[16px] p-6 space-y-3 md:translate-y-6 will-change-transform">
-              <span className="w-10 h-10 rounded-full bg-white border border-black/[0.06] grid place-items-center shadow-sm"><Bell className="w-5 h-5" /></span>
-              <h3 className="text-[15px] font-semibold" style={{ letterSpacing: "-0.01em" }}>Notifikasi Langsung</h3>
-              <p className="text-[13px] leading-[1.6] text-[#525252]">Setiap laporan yang masuk akan secara otomatis dikirimkan ke grup Telegram admin terkait untuk respon cepat.</p>
+            <div className="feat-card glass-feature rounded-[16px] p-6 flex flex-col will-change-transform">
+              <span className="w-10 h-10 rounded-full bg-white/80 border border-black/[0.06] grid place-items-center shadow-sm shrink-0"><Bell className="w-5 h-5" /></span>
+              <h3 className="text-[15px] font-semibold mt-3" style={{ letterSpacing: "-0.01em" }}>Notifikasi Langsung</h3>
+              <p className="text-[13px] leading-[1.6] text-[#525252] mt-2">Setiap laporan yang masuk akan secara otomatis dikirimkan ke grup Telegram admin terkait untuk respon cepat.</p>
             </div>
-            <div className="feat-card glass-card rounded-[16px] p-6 space-y-3 md:translate-y-12 will-change-transform">
-              <span className="w-10 h-10 rounded-full bg-white border border-black/[0.06] grid place-items-center shadow-sm"><Layers3 className="w-5 h-5" /></span>
-              <h3 className="text-[15px] font-semibold" style={{ letterSpacing: "-0.01em" }}>Penanganan Terstruktur</h3>
-              <p className="text-[13px] leading-[1.6] text-[#525252]">Lacak progres laporan Anda secara transparan. Admin akan memperbarui status secara berkala (Diproses / Selesai).</p>
+            <div className="feat-card glass-feature rounded-[16px] p-6 flex flex-col will-change-transform">
+              <span className="w-10 h-10 rounded-full bg-white/80 border border-black/[0.06] grid place-items-center shadow-sm shrink-0"><Layers3 className="w-5 h-5" /></span>
+              <h3 className="text-[15px] font-semibold mt-3" style={{ letterSpacing: "-0.01em" }}>Penanganan Terstruktur</h3>
+              <p className="text-[13px] leading-[1.6] text-[#525252] mt-2">Lacak progres laporan Anda secara transparan. Admin akan memperbarui status secara berkala (Diproses / Selesai).</p>
             </div>
           </div>
         </div>
