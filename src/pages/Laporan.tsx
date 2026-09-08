@@ -91,22 +91,6 @@ export default function Laporan(){
     <div className="bg-transparent">
       <div className="container-wide py-6 md:py-10">
         <div className="max-w-[640px] mx-auto space-y-6">
-          <motion.div initial={reduce?false:{y:12,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.45}} className="text-center space-y-4 will-change-transform">
-            <div className="inline-flex items-center gap-2 glass-pill px-3.5 py-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#0A84FF] animate-pulse" />
-              <span className="label-sm text-[#1a1c1c]">AMAN & ANONIM — KAMU TIDAK SENDIRI</span>
-            </div>
-            <h1 className="text-[30px] md:text-[38px] font-[800] leading-[1.05]" style={{ letterSpacing:"-0.02em" }}>
-              Ceritakan yang<br/>perlu diperbaiki
-            </h1>
-            <p className="text-[14px] leading-[1.6] text-[#525252] max-w-[520px] mx-auto">
-              Apa pun yang mengganjal — fasilitas, akademik, atau kegiatan — ceritamu penting. Tulis dengan jujur, kami dengarkan tanpa menghakimi.
-            </p>
-            <div className="flex items-center justify-center gap-2 pt-1">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-pill text-[11px] font-medium"><Clock className="w-3.5 h-3.5" />Respon ~24 jam</span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-pill text-[11px] font-medium"><Lock className="w-3.5 h-3.5" />Tanpa nama</span>
-            </div>
-          </motion.div>
 
           <motion.div initial={reduce?false:{y:16,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.5,delay:0.08}} className="glass-card rounded-[16px] p-5 md:p-7 will-change-transform">
             <form onSubmit={submit} className="space-y-7">
