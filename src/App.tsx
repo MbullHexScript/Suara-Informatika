@@ -9,14 +9,25 @@ import AdminLogin from "@/pages/AdminLogin"
 import AdminDashboard from "@/pages/AdminDashboard"
 import AdminDetail from "@/pages/AdminDetail"
 
+function FloatingOrbs() {
+  return (
+    <>
+      <div className="orb orb--blue" />
+      <div className="orb orb--purple" />
+      <div className="orb orb--pink" />
+    </>
+  )
+}
+
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col bg-transparent min-h-screen" style={{ minHeight: "100dvh" } as React.CSSProperties}>
+      <FloatingOrbs />
       <Navbar />
-      <main className="flex-1 pb-[var(--content-bottom)] md:pb-0 bg-transparent">{children}</main>
-      <footer className="hidden md:block glass border-t border-black/[0.06] py-6">
-        <div className="container-wide flex items-center justify-between gap-3 label-sm text-[#525252]">
-          <span className="font-bold tracking-[-0.01em] text-[#1a1c1c]">SUARA INFORMATIKA</span>
+      <main className="flex-1 pb-[var(--content-bottom)] md:pb-0 bg-transparent relative z-[1]">{children}</main>
+      <footer className="hidden md:block glass border-t border-white/[0.1] py-6 relative z-[1]">
+        <div className="container-wide flex items-center justify-between gap-3 label-sm text-white/60">
+          <span className="font-bold tracking-[-0.01em] text-white">SUARA INFORMATIKA</span>
           <span>© 2026 · Anonim · Aman · Transparan</span>
         </div>
       </footer>
