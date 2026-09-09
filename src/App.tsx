@@ -12,9 +12,9 @@ import AdminDetail from "@/pages/AdminDetail"
 function FloatingOrbs() {
   return (
     <>
-      <div className="orb orb--blue" />
-      <div className="orb orb--purple" />
-      <div className="orb orb--pink" />
+      <div className="orb orb--teal" />
+      <div className="orb orb--deep" />
+      <div className="orb orb--moss" />
     </>
   )
 }

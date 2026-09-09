@@ -47,15 +47,11 @@ body {
   min-height: 100dvh;
   overflow-x: hidden;
   background: linear-gradient(135deg,
-    #0f0c29 0%,
-    #1a1050 15%,
-    #302b63 30%,
-    #4a3f8a 45%,
-    #7b5ea7 58%,
-    #9b6b9e 68%,
-    #c97b8b 78%,
-    #e8a0bf 88%,
-    #f4c4d4 100%
+    #1f4037 0%,
+    #2d3a3f 25%,
+    #3d3540 50%,
+    #493240 75%,
+    #3a2d3c 100%
   );
   background-attachment: fixed;
 }
@@ -171,24 +167,24 @@ h1, h2, h3 { font-optical-sizing: auto; text-wrap: balance; }
   z-index: 0;
   will-change: transform;
 }
-.orb--blue {
+.orb--teal {
   width: 500px; height: 500px;
   top: -10%; left: -5%;
-  background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(31,64,55,0.4) 0%, transparent 70%);
   filter: blur(80px);
   animation: orb-float-1 20s ease-in-out infinite;
 }
-.orb--purple {
+.orb--deep {
   width: 600px; height: 600px;
   top: 30%; right: -10%;
-  background: radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(73,50,64,0.35) 0%, transparent 70%);
   filter: blur(100px);
   animation: orb-float-2 25s ease-in-out infinite;
 }
-.orb--pink {
+.orb--moss {
   width: 450px; height: 450px;
   bottom: -5%; left: 20%;
-  background: radial-gradient(circle, rgba(236,72,153,0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(45,58,63,0.35) 0%, transparent 70%);
   filter: blur(90px);
   animation: orb-float-3 18s ease-in-out infinite;
 }
