@@ -16,17 +16,25 @@ export default function Navbar() {
 
   return (
     <>
-      <header className={`sticky top-0 z-40 will-change-[backdrop-filter] ${scrolled ? "glass scrolled" : "glass"}`}>
-        <div className="container-wide flex h-[64px] items-center justify-between gap-6">
-          <Link to="/" className="flex items-center gap-2.5 active:scale-[0.97] transition duration-100 shrink-0 will-change-transform">
-            <img src="/icon-web.jpg" alt="Suara Informatika" className="w-9 h-9 rounded-xl object-cover border border-white/[0.15] shadow-sm" width={36} height={36} />
-            <span className="leading-none">
-              <span className="block font-[700] text-[14px] tracking-[-0.02em] leading-[1.05] text-white">SUARA</span>
-              <span className="block font-[700] text-[14px] tracking-[-0.02em] leading-[1.05] -mt-0.5 text-white">INFORMATIKA</span>
-            </span>
+      {/* Desktop — floating pill navbar, menggantung dari atas */}
+      <header className={`hidden md:block sticky top-3 z-40 will-change-[backdrop-filter] mx-auto w-fit`}>
+        <div className={`flex h-[52px] items-center gap-2 px-2 rounded-full ${scrolled ? "glass scrolled" : "glass"}`}>
+          <Link to="/" className="flex items-center gap-2 active:scale-[0.97] transition duration-100 shrink-0 will-change-transform pl-2 pr-1">
+            <img src="/icon-web.jpg" alt="Suara Informatika" className="w-8 h-8 rounded-lg object-cover border border-white/[0.15] shadow-sm" width={32} height={32} />
+            <span className="font-[700] text-[13px] tracking-[-0.02em] leading-none text-white whitespace-nowrap">SUARA INFORMATIKA</span>
           </Link>
+          <div className="w-px h-5 bg-white/[0.15]" />
           <DesktopNav />
-          <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-white/60 border border-white/[0.15] px-2.5 py-1 rounded-full glass shrink-0">ANONIM</span>
+        </div>
+      </header>
+
+      {/* Mobile — simple top bar */}
+      <header className={`md:hidden sticky top-0 z-40 will-change-[backdrop-filter] ${scrolled ? "glass scrolled" : "glass"}`}>
+        <div className="container-wide flex h-[56px] items-center justify-center gap-2.5">
+          <Link to="/" className="flex items-center gap-2 active:scale-[0.97] transition duration-100 will-change-transform">
+            <img src="/icon-web.jpg" alt="Suara Informatika" className="w-8 h-8 rounded-lg object-cover border border-white/[0.15] shadow-sm" width={32} height={32} />
+            <span className="font-[700] text-[13px] tracking-[-0.02em] leading-none text-white">SUARA INFORMATIKA</span>
+          </Link>
         </div>
       </header>
       <TubeLightNavbar />

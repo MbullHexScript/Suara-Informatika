@@ -95,7 +95,7 @@ export function DesktopNav() {
   const isActive = useIsActive()
 
   return (
-    <div className="hidden md:flex items-center gap-1 bg-white/[0.06] border border-white/[0.12] py-1 px-1 rounded-full">
+    <div className="hidden md:flex items-center gap-1 py-0.5 px-0.5 rounded-full">
       {tabs.map((tab) => {
         const active = isActive(tab.url)
         return (

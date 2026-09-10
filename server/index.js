@@ -25,7 +25,7 @@ function sanitize(s){ return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;")
 
 const ALLOWED_TYPES = ["keluhan","kritik","saran"]
 const ALLOWED_TARGETS = ["jurusan","himpunan"]
-const ALLOWED_CATS = ["Akademik","Fasilitas","Dosen/Pengajaran","Administrasi","Kegiatan Kemahasiswaan","Himpunan","Lainnya"]
+const ALLOWED_CATS = ["Akademik","Fasilitas","Dosen/Pengajaran","Administrasi","Kegiatan Kemahasiswaan","Himpunan","UKT (Uang Kuliah Tunggal)","Lainnya"]
 const ALLOWED_MIME = ["image/jpeg","image/png","image/webp"]
 const MAX_SIZE = 5*1024*1024
 

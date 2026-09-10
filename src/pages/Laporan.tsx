@@ -4,7 +4,7 @@ import { Upload, X, CheckCircle2, Copy, Shield, Image as ImgIcon, Loader2, Arrow
 import { toast } from "sonner"
 import type { ReportType, ReportTarget } from "@/types"
 
-const CATS = ["Akademik","Fasilitas","Dosen/Pengajaran","Administrasi","Kegiatan Kemahasiswaan","Himpunan","Lainnya"] as const
+const CATS = ["Akademik","Fasilitas","Dosen/Pengajaran","Administrasi","Kegiatan Kemahasiswaan","Himpunan","UKT (Uang Kuliah Tunggal)","Lainnya"] as const
 
 export default function Laporan(){
   const reduce = useReducedMotion()

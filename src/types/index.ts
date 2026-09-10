@@ -1,7 +1,7 @@
 export type ReportType = 'keluhan' | 'kritik' | 'saran'
 export type ReportTarget = 'jurusan' | 'himpunan'
 export type ReportStatus = 'baru' | 'diproses' | 'selesai' | 'ditolak'
-export type ReportCategory = 'Akademik' | 'Fasilitas' | 'Dosen/Pengajaran' | 'Administrasi' | 'Kegiatan Kemahasiswaan' | 'Himpunan' | 'Lainnya'
+export type ReportCategory = 'Akademik' | 'Fasilitas' | 'Dosen/Pengajaran' | 'Administrasi' | 'Kegiatan Kemahasiswaan' | 'Himpunan' | 'UKT (Uang Kuliah Tunggal)' | 'Lainnya'
 
 export interface Report {
   id: string

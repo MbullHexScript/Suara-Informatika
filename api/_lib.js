@@ -33,7 +33,7 @@ export function sanitize(s) { return String(s).replace(/</g, "&lt;").replace(/>/
 
 export const ALLOWED_TYPES = ["keluhan", "kritik", "saran"];
 export const ALLOWED_TARGETS = ["jurusan", "himpunan"];
-export const ALLOWED_CATS = ["Akademik", "Fasilitas", "Dosen/Pengajaran", "Administrasi", "Kegiatan Kemahasiswaan", "Himpunan", "Lainnya"];
+export const ALLOWED_CATS = ["Akademik", "Fasilitas", "Dosen/Pengajaran", "Administrasi", "Kegiatan Kemahasiswaan", "Himpunan", "UKT (Uang Kuliah Tunggal)", "Lainnya"];
 export const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp"];
 export const MAX_SIZE = 5 * 1024 * 1024;
 
