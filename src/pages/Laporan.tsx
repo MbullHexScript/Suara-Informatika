@@ -4,7 +4,7 @@ import { Upload, X, CheckCircle2, Copy, Shield, Image as ImgIcon, Loader2, Arrow
 import { toast } from "sonner"
 import type { ReportType, ReportTarget } from "@/types"
 
-const CATS = ["Akademik","Fasilitas","Dosen/Pengajaran","Administrasi","Kegiatan Kemahasiswaan","Himpunan","UKT (Uang Kuliah Tunggal)","Lainnya"] as const
+const CATS = ["Akademik","Fasilitas","Dosen/Pengajaran","Administrasi","Himpunan","UKT (Uang Kuliah Tunggal)","Lainnya"] as const
 
 export default function Laporan(){
   const reduce = useReducedMotion()
@@ -96,8 +96,7 @@ export default function Laporan(){
               <input value={honey} onChange={e=>setHoney(e.target.value)} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden />
 
               <motion.div initial={reduce?false:{y:8,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.35,delay:0.04}} className="space-y-3 will-change-transform">
-                <div className="flex items-center gap-2 label-sm text-white"><span className="h-px w-6 bg-white/40" /> 01. JENIS LAPORAN</div>
-                <p className="text-[12px] text-white/40 -mt-1">Pilih yang paling menggambarkan perasaanmu sekarang.</p>
+                <div className="flex items-center gap-2 label-sm text-white">01. JENIS LAPORAN</div>
                 <div className="grid grid-cols-3 gap-2 p-1.5 rounded-[12px] glass-pill">
                   {(["keluhan","kritik","saran"] as ReportType[]).map(v=>(
                     <button key={v} type="button" onClick={()=>setType(v)} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className={`pressable h-10 rounded-[10px] text-[13px] font-semibold capitalize will-change-transform ${type===v?"bg-white text-black shadow-sm":"text-white/60 hover:bg-white/10"}`} style={{ transition:"transform 100ms ease-out, background 160ms ease" }}>{v}</button>
@@ -106,17 +105,16 @@ export default function Laporan(){
               </motion.div>
 
               <motion.div initial={reduce?false:{y:8,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.35,delay:0.08}} className="space-y-3 will-change-transform">
-                <div className="flex items-center gap-2 label-sm text-white"><span className="h-px w-6 bg-white/40" /> 02. DITUJUKAN KE</div>
-                <p className="text-[12px] text-white/40 -mt-1">Agar diteruskan ke pihak yang paling tepat.</p>
+                <div className="flex items-center gap-2 label-sm text-white">02. DITUJUKAN KE</div>
                 <div className="grid grid-cols-2 gap-2 p-1.5 rounded-[12px] glass-pill">
                   {(["jurusan","himpunan"] as ReportTarget[]).map(v=>(
-                    <button key={v} type="button" onClick={()=>setTarget(v)} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className={`pressable h-10 rounded-[10px] text-[13px] font-semibold capitalize will-change-transform ${target===v?"bg-white text-black shadow border border-white/[0.15]":"text-white/60 hover:bg-white/10"}`} style={{ transition:"transform 100ms ease-out" }}>{v==="jurusan"?"Jurusan Informatika":"Himpunan (HMJ)"}</button>
+                    <button key={v} type="button" onClick={()=>setTarget(v)} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className={`pressable h-10 rounded-[10px] text-[13px] font-semibold capitalize will-change-transform ${target===v?"bg-white text-black shadow border border-white/[0.15]":"text-white/60 hover:bg-white/10"}`} style={{ transition:"transform 100ms ease-out" }}>{v==="jurusan"?"Jurusan":"Himpunan"}</button>
                   ))}
                 </div>
               </motion.div>
 
               <motion.div initial={reduce?false:{y:8,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.35,delay:0.12}} className="space-y-3 will-change-transform">
-                <div className="flex items-center gap-2 label-sm text-white"><span className="h-px w-6 bg-white/40" /> 03. CERITAMU</div>
+                <div className="flex items-center gap-2 label-sm text-white">03. APA YANG MAU KAMU LAPORKAN</div>
                 <div className="space-y-3">
                   <div className="space-y-1.5">
                     <label className="label-sm text-white/60">KATEGORI</label>
