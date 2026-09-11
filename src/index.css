@@ -46,7 +46,7 @@ body {
   min-height: 100%;
   min-height: 100dvh;
   overflow-x: hidden;
-  background: linear-gradient(135deg, #134e48 0%, #1f4037 40%, #289C8F 100%);
+  background: linear-gradient(135deg, #13404e 0%, #1f3440 40%, #287f9c 100%);
   background-attachment: fixed;
 }
 img, video { max-width: 100%; height: auto; display: block; }
