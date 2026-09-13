@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
-import { Upload, X, CheckCircle2, Copy, Shield, Image as ImgIcon, Loader2, ArrowRight } from "lucide-react"
+import { Upload, X, CheckCircle2, Copy, Shield, Image as ImgIcon, Loader2, ArrowRight, HeartHandshake } from "lucide-react"
 import { toast } from "sonner"
 import type { ReportType, ReportTarget } from "@/types"
 
@@ -13,6 +13,7 @@ export default function Laporan(){
   const [category,setCategory]=useState("")
   const [title,setTitle]=useState("")
   const [desc,setDesc]=useState("")
+  const [contact,setContact]=useState("")
   const [files,setFiles]=useState<File[]>([])
   const [previews,setPreviews]=useState<string[]>([])
   const [loading,setLoading]=useState(false)
@@ -41,6 +42,8 @@ export default function Laporan(){
     if(!title.trim()||title.length>100) return toast.error("Judul wajib 1–100 karakter")
     if(!desc.trim()||desc.length>2000) return toast.error("Deskripsi wajib 1–2000 karakter")
     if(!category) return toast.error("Pilih kategori")
+    if(type === "mental_health" && !contact.trim()) return toast.error("Nomor WhatsApp/Identitas wajib diisi untuk laporan Mental Health")
+    
     setLoading(true)
     try{
       const urls:string[]=[]
@@ -50,10 +53,27 @@ export default function Laporan(){
         if(!r.ok){ const j=await r.json().catch(()=>({error:"Upload gagal"})); throw new Error(j.error||"Upload gagal")}
         const j=await r.json(); urls.push(j.url)
       }
-      const res=await fetch("/api/reports",{method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ type,target,category,title,description:desc, attachments:urls, honeypot:honey })})
+      const res=await fetch("/api/reports",{
+        method:"POST", 
+        headers:{"Content-Type":"application/json"}, 
+        body:JSON.stringify({ 
+          type,
+          target,
+          category,
+          title,
+          description:desc, 
+          contact: type === "mental_health" ? contact : null,
+          attachments:urls, 
+          honeypot:honey 
+        })
+      })
       const j=await res.json()
       if(!res.ok) throw new Error(j.error||"Gagal kirim")
-      if(j.success && !j.id){ toast.success("Laporan diterima"); setTitle(""); setDesc(""); setCategory(""); setFiles([]); setPreviews([]); return }
+      if(j.success && !j.id){ 
+        toast.success("Laporan diterima"); 
+        setTitle(""); setDesc(""); setCategory(""); setContact(""); setFiles([]); setPreviews([]); 
+        return 
+      }
       setTicket(j.id)
       toast.success("Laporan terkirim")
     }catch(err){ toast.error(err instanceof Error?err.message:"Gagal kirim") }
@@ -69,7 +89,11 @@ export default function Laporan(){
               <div className="w-14 h-14 rounded-full glass-pill grid place-items-center mx-auto"><CheckCircle2 className="w-7 h-7 text-white" /></div>
               <div className="space-y-2">
                 <h1 className="text-[22px] font-bold text-white" style={{ letterSpacing:"-0.02em" }}>Laporan terkirim — terima kasih</h1>
-                <p className="text-[13px] leading-[1.6] text-white/60">Simpan nomor tiket ini ya. Ini satu-satunya cara kamu bisa cek kabarnya nanti, tanpa membuka identitasmu.</p>
+                <p className="text-[13px] leading-[1.6] text-white/60">
+                  {type === "mental_health" 
+                    ? "Tim kami akan menjaga kerahasiaan identitasmu dan segera menghubungi nomor WhatsApp yang kamu cantumkan untuk merangkul dan berdiskusi." 
+                    : "Simpan nomor tiket ini ya. Ini satu-satunya cara kamu bisa cek kabarnya nanti, tanpa membuka identitasmu."}
+                </p>
               </div>
               <div className="rounded-[12px] bg-white/[0.08] border border-white/[0.12] p-4 flex items-center gap-3 text-left backdrop-blur">
                 <span className="flex-1 font-mono text-[12px] break-all text-white">{ticket}</span>
@@ -79,7 +103,7 @@ export default function Laporan(){
                 <a href={`/lacak/${ticket}`} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className="pressable h-10 px-5 rounded-full bg-white text-black text-[12px] font-semibold tracking-[0.04em] uppercase grid place-items-center will-change-transform">Lacak status</a>
                 <button onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} onClick={()=>setTicket(null)} className="pressable h-10 px-5 rounded-full glass-pill text-[12px] font-semibold will-change-transform text-white">Kirim lagi</button>
               </div>
-              <p className="text-[11px] text-white/50 inline-flex items-center gap-1.5 justify-center"><Shield className="w-3.5 h-3.5" /> Anonim penuh — kami jaga rahasiamu</p>
+              <p className="text-[11px] text-white/50 inline-flex items-center gap-1.5 justify-center"><Shield className="w-3.5 h-3.5" /> {type === "mental_health" ? "Privasi Terjaga — Kontak khusus tim pengurus" : "Anonim penuh — kami jaga rahasiamu"}</p>
             </motion.div>
           </div>
         </div>
@@ -98,8 +122,21 @@ export default function Laporan(){
               <motion.div initial={reduce?false:{y:8,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.35,delay:0.04}} className="space-y-3 will-change-transform">
                 <div className="flex items-center gap-2 label-sm text-white">01. JENIS LAPORAN</div>
                 <div className="grid grid-cols-3 gap-2 p-1.5 rounded-[12px] glass-pill">
-                  {(["keluhan","kritik","saran"] as ReportType[]).map(v=>(
-                    <button key={v} type="button" onClick={()=>setType(v)} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className={`pressable h-10 rounded-[10px] text-[13px] font-semibold capitalize will-change-transform ${type===v?"bg-white text-black shadow-sm":"text-white/60 hover:bg-white/10"}`} style={{ transition:"transform 100ms ease-out, background 160ms ease" }}>{v}</button>
+                  {[
+                    { id: "keluhan", label: "Keluhan" },
+                    { id: "aspirasi", label: "Aspirasi" },
+                    { id: "mental_health", label: "Mental Health" }
+                  ].map(v=>(
+                    <button 
+                      key={v.id} 
+                      type="button" 
+                      onClick={()=>setType(v.id as ReportType)} 
+                      onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} 
+                      className={`pressable h-10 rounded-[10px] text-[12px] md:text-[13px] font-semibold will-change-transform ${type===v.id?"bg-white text-black shadow-sm":"text-white/60 hover:bg-white/10"}`} 
+                      style={{ transition:"transform 100ms ease-out, background 160ms ease" }}
+                    >
+                      {v.label}
+                    </button>
                   ))}
                 </div>
               </motion.div>
@@ -126,13 +163,34 @@ export default function Laporan(){
                       <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white/50">⌄</span>
                     </div>
                   </div>
+                  
+                  {type === "mental_health" && (
+                    <motion.div initial={reduce?false:{y:4,opacity:0}} animate={{y:0,opacity:1}} className="space-y-1.5 pt-1">
+                      <div className="flex items-center justify-between">
+                        <label className="label-sm text-white flex items-center gap-1.5">
+                          NOMOR WHATSAPP / IDENTITAS <span className="text-red-400">*</span>
+                        </label>
+                      </div>
+                      <input 
+                        value={contact} 
+                        onChange={e=>setContact(e.target.value)} 
+                        placeholder="Misal: 081234567890 / Nama & No. WA" 
+                        className="w-full h-12 px-4 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur" 
+                      />
+                      <p className="text-[11px] text-white/50 flex items-center gap-1">
+                        <HeartHandshake className="w-3.5 h-3.5 text-pink-400 shrink-0" />
+                        Khusus Mental Health, isi identitas/No. WA agar kami bisa merangkul & berdiskusi langsung.
+                      </p>
+                    </motion.div>
+                  )}
+
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between"><label className="label-sm text-white/60">JUDUL RINGKAS</label><span className="text-[11px] text-white/40">{title.length} / 100</span></div>
-                    <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Misal: AC ruang lab sering mati siang hari" maxLength={100} className="w-full h-12 px-4 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur" />
+                    <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Misal: Masalah pertemanan kampus / butuh teman cerita" maxLength={100} className="w-full h-12 px-4 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur" />
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between"><label className="label-sm text-white/60">CERITA LENGKAP</label><span className="text-[11px] text-white/40">{desc.length} / 2000</span></div>
-                    <textarea value={desc} onChange={e=>setDesc(e.target.value)} placeholder="Tulis apa adanya — kapan terjadi, di mana, seperti apa dampaknya. Tidak perlu sempurna, yang jujur lebih membantu." maxLength={2000} rows={5} className="w-full min-h-[140px] p-4 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white leading-[1.6] placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur" />
+                    <textarea value={desc} onChange={e=>setDesc(e.target.value)} placeholder="Tulis apa adanya — apa yang sedang kamu rasakan atau hadapi. Kamu tidak sendiri, cerita saja di sini." maxLength={2000} rows={5} className="w-full min-h-[140px] p-4 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white leading-[1.6] placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur" />
                     <p className="text-[11px] text-white/40">Tips: tuliskan kronologi singkat + harapanmu. Kami baca dengan hati.</p>
                   </div>
                 </div>
@@ -163,7 +221,11 @@ export default function Laporan(){
                 )}
                 <div className="flex items-center gap-2 glass-pill p-3">
                   <span className="w-8 h-8 rounded-full bg-white/10 border border-white/[0.15] grid place-items-center shrink-0"><Shield className="w-4 h-4 text-white" /></span>
-                  <p className="text-[11px] leading-[1.5] text-white/50"><b className="text-white">Privasimu aman</b> — tidak ada nama, NIM, atau kontak yang kami simpan.</p>
+                  {type === "mental_health" ? (
+                    <p className="text-[11px] leading-[1.5] text-white/50"><b className="text-white">Privasi Terjaga</b> — Kontakmu hanya digunakan tim pengurus untuk merangkul dan mendampingimu.</p>
+                  ) : (
+                    <p className="text-[11px] leading-[1.5] text-white/50"><b className="text-white">Privasimu aman</b> — tidak ada nama, NIM, atau kontak yang kami simpan.</p>
+                  )}
                 </div>
               </motion.div>
 
