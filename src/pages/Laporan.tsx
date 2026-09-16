@@ -4,7 +4,13 @@ import { Upload, X, CheckCircle2, Copy, Shield, Image as ImgIcon, Loader2, Arrow
 import { toast } from "sonner"
 import type { ReportType, ReportTarget } from "@/types"
 
-const CATS = ["Akademik","Fasilitas","Dosen/Pengajaran","Administrasi","Himpunan","UKT (Uang Kuliah Tunggal)","Lainnya"] as const
+const CATS = ["Akademik","Fasilitas","Dosen/Pengajaran","Administrasi","Kegiatan Kemahasiswaan","Himpunan","UKT (Uang Kuliah Tunggal)","Lainnya"] as const
+
+const TYPE_OPTIONS = [
+  { id: "keluhan" as ReportType, label: "Keluhan" },
+  { id: "aspirasi" as ReportType, label: "Aspirasi" },
+  { id: "mental_health" as ReportType, label: "Mental Health" }
+] as const
 
 export default function Laporan(){
   const reduce = useReducedMotion()
@@ -20,6 +26,8 @@ export default function Laporan(){
   const [ticket,setTicket]=useState<string|null>(null)
   const [honey,setHoney]=useState("")
   const [dragOver,setDragOver]=useState(false)
+
+  const isMentalHealth = type === "mental_health"
 
   const onFiles=(list: FileList | File[] | null)=>{
     if(!list) return
@@ -39,10 +47,10 @@ export default function Laporan(){
 
   const submit=async(e:React.FormEvent)=>{
     e.preventDefault()
-    if(!title.trim()||title.length>100) return toast.error("Judul wajib 1–100 karakter")
+    if (!isMentalHealth && (!title.trim()||title.length>100)) return toast.error("Judul wajib 1–100 karakter")
     if(!desc.trim()||desc.length>2000) return toast.error("Deskripsi wajib 1–2000 karakter")
-    if(!category) return toast.error("Pilih kategori")
-    if(type === "mental_health" && !contact.trim()) return toast.error("Nomor WhatsApp/Identitas wajib diisi untuk laporan Mental Health")
+    if (!isMentalHealth && !category) return toast.error("Pilih kategori")
+    if (isMentalHealth && !contact.trim()) return toast.error("Nomor WhatsApp/Identitas wajib diisi untuk Mental Health")
     
     setLoading(true)
     try{
@@ -58,11 +66,11 @@ export default function Laporan(){
         headers:{"Content-Type":"application/json"}, 
         body:JSON.stringify({ 
           type,
-          target,
+          target: isMentalHealth ? undefined : target,
           category,
           title,
           description:desc, 
-          contact: type === "mental_health" ? contact : null,
+          contact: isMentalHealth ? contact : null,
           attachments:urls, 
           honeypot:honey 
         })
@@ -119,18 +127,15 @@ export default function Laporan(){
             <form onSubmit={submit} className="space-y-7">
               <input value={honey} onChange={e=>setHoney(e.target.value)} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden />
 
+              {/* 01. JENIS LAPORAN */}
               <motion.div initial={reduce?false:{y:8,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.35,delay:0.04}} className="space-y-3 will-change-transform">
                 <div className="flex items-center gap-2 label-sm text-white">01. JENIS LAPORAN</div>
                 <div className="grid grid-cols-3 gap-2 p-1.5 rounded-[12px] glass-pill">
-                  {[
-                    { id: "keluhan", label: "Keluhan" },
-                    { id: "aspirasi", label: "Aspirasi" },
-                    { id: "mental_health", label: "Mental Health" }
-                  ].map(v=>(
+                  {TYPE_OPTIONS.map(v=>(
                     <button 
                       key={v.id} 
                       type="button" 
-                      onClick={()=>setType(v.id as ReportType)} 
+                      onClick={()=>{setType(v.id); setCategory(""); setTitle("");}} 
                       onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} 
                       className={`pressable h-10 rounded-[10px] text-[12px] md:text-[13px] font-semibold will-change-transform ${type===v.id?"bg-white text-black shadow-sm":"text-white/60 hover:bg-white/10"}`} 
                       style={{ transition:"transform 100ms ease-out, background 160ms ease" }}
@@ -141,30 +146,46 @@ export default function Laporan(){
                 </div>
               </motion.div>
 
-              <motion.div initial={reduce?false:{y:8,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.35,delay:0.08}} className="space-y-3 will-change-transform">
-                <div className="flex items-center gap-2 label-sm text-white">02. DITUJUKAN KE</div>
-                <div className="grid grid-cols-2 gap-2 p-1.5 rounded-[12px] glass-pill">
-                  {(["jurusan","himpunan"] as ReportTarget[]).map(v=>(
-                    <button key={v} type="button" onClick={()=>setTarget(v)} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className={`pressable h-10 rounded-[10px] text-[13px] font-semibold capitalize will-change-transform ${target===v?"bg-white text-black shadow border border-white/[0.15]":"text-white/60 hover:bg-white/10"}`} style={{ transition:"transform 100ms ease-out" }}>{v==="jurusan"?"Jurusan":"Himpunan"}</button>
-                  ))}
-                </div>
-              </motion.div>
-
-              <motion.div initial={reduce?false:{y:8,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.35,delay:0.12}} className="space-y-3 will-change-transform">
-                <div className="flex items-center gap-2 label-sm text-white">03. APA YANG MAU KAMU LAPORKAN</div>
-                <div className="space-y-3">
-                  <div className="space-y-1.5">
-                    <label className="label-sm text-white/60">KATEGORI</label>
-                    <div className="relative">
-                      <select value={category} onChange={e=>setCategory(e.target.value)} className="w-full h-12 px-4 pr-10 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white appearance-none focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur">
-                        <option value="" className="bg-[#1a1050] text-white">Pilih yang paling dekat...</option>
-                        {CATS.map(c=> <option key={c} value={c} className="bg-[#1a1050] text-white">{c}</option>)}
-                      </select>
-                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white/50">⌄</span>
-                    </div>
+              {/* 02. DITUJUKAN KE - HIDE for mental_health */}
+              {!isMentalHealth && (
+                <motion.div initial={reduce?false:{y:8,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.35,delay:0.08}} className="space-y-3 will-change-transform">
+                  <div className="flex items-center gap-2 label-sm text-white">02. DITUJUKAN KE</div>
+                  <div className="grid grid-cols-2 gap-2 p-1.5 rounded-[12px] glass-pill">
+                    {(["jurusan","himpunan"] as ReportTarget[]).map(v=>(
+                      <button key={v} type="button" onClick={()=>setTarget(v)} onPointerDown={(e)=>(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)} className={`pressable h-10 rounded-[10px] text-[13px] font-semibold capitalize will-change-transform ${target===v?"bg-white text-black shadow border border-white/[0.15]":"text-white/60 hover:bg-white/10"}`} style={{ transition:"transform 100ms ease-out" }}>{v==="jurusan"?"Jurusan":"Himpunan"}</button>
+                    ))}
                   </div>
+                </motion.div>
+              )}
+
+              {/* 03. FORM FIELDS - CONDITIONAL */}
+              <motion.div initial={reduce?false:{y:8,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.35,delay:0.12}} className="space-y-3 will-change-transform">
+                <div className="flex items-center gap-2 label-sm text-white">{isMentalHealth ? "02. APA YANG MAU KAMU CERITAKAN" : "03. APA YANG MAU KAMU LAPORKAN"}</div>
+                <div className="space-y-3">
                   
-                  {type === "mental_health" && (
+                  {/* KATEGORI / NAMA - CONDITIONAL */}
+                  <div className="space-y-1.5">
+                    <label className="label-sm text-white/60">{isMentalHealth ? "NAMA" : "KATEGORI"}</label>
+                    {isMentalHealth ? (
+                      <input 
+                        value={category} 
+                        onChange={e=>setCategory(e.target.value)} 
+                        placeholder="Nama lengkapmu (opsional)" 
+                        className="w-full h-12 px-4 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur" 
+                      />
+                    ) : (
+                      <div className="relative">
+                        <select value={category} onChange={e=>setCategory(e.target.value)} className="w-full h-12 px-4 pr-10 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white appearance-none focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur">
+                          <option value="" className="bg-[#1a1050] text-white">Pilih yang paling dekat...</option>
+                          {CATS.map(c=> <option key={c} value={c} className="bg-[#1a1050] text-white">{c}</option>)}
+                        </select>
+                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white/50">⌄</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* CONTACT FIELD - ONLY for mental_health */}
+                  {isMentalHealth && (
                     <motion.div initial={reduce?false:{y:4,opacity:0}} animate={{y:0,opacity:1}} className="space-y-1.5 pt-1">
                       <div className="flex items-center justify-between">
                         <label className="label-sm text-white flex items-center gap-1.5">
@@ -184,20 +205,40 @@ export default function Laporan(){
                     </motion.div>
                   )}
 
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between"><label className="label-sm text-white/60">JUDUL RINGKAS</label><span className="text-[11px] text-white/40">{title.length} / 100</span></div>
-                    <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Misal: Masalah pertemanan kampus / butuh teman cerita" maxLength={100} className="w-full h-12 px-4 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur" />
-                  </div>
+                  {/* JUDUL RINGKAS - HIDE for mental_health */}
+                  {!isMentalHealth && (
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between"><label className="label-sm text-white/60">JUDUL RINGKAS</label><span className="text-[11px] text-white/40">{title.length} / 100</span></div>
+                      <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Misal: AC ruang lab sering mati siang hari" maxLength={100} className="w-full h-12 px-4 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur" />
+                    </div>
+                  )}
+
+                  {/* DESKRIPSI - CONDITIONAL PLACEHOLDER */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between"><label className="label-sm text-white/60">CERITA LENGKAP</label><span className="text-[11px] text-white/40">{desc.length} / 2000</span></div>
-                    <textarea value={desc} onChange={e=>setDesc(e.target.value)} placeholder="Tulis apa adanya — apa yang sedang kamu rasakan atau hadapi. Kamu tidak sendiri, cerita saja di sini." maxLength={2000} rows={5} className="w-full min-h-[140px] p-4 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white leading-[1.6] placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur" />
-                    <p className="text-[11px] text-white/40">Tips: tuliskan kronologi singkat + harapanmu. Kami baca dengan hati.</p>
+                    <textarea 
+                      value={desc} 
+                      onChange={e=>setDesc(e.target.value)} 
+                      placeholder={isMentalHealth 
+                        ? "Tulis apa yang sedang kamu rasakan atau hadapi di ranah pribadi. Misal: masalah keluarga, stres akademik, kecemasan, butuh teman cerita, dll. Kamu tidak sendiri." 
+                        : "Tulis apa adanya — kapan terjadi, di mana, seperti apa dampaknya. Tidak perlu sempurna, yang jujur lebih membantu."
+                      } 
+                      maxLength={2000} 
+                      rows={5} 
+                      className="w-full min-h-[140px] p-4 rounded-[12px] bg-white/[0.08] border border-white/[0.15] text-[14px] text-white leading-[1.6] placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-2 focus:ring-white/10 backdrop-blur" 
+                    />
+                    <p className="text-[11px] text-white/40">
+                      {isMentalHealth 
+                        ? "Tips: ceritakan perasaanmu dengan jujur. Kami siap mendengarkan dan mendampingimu." 
+                        : "Tips: tuliskan kronologi singkat + harapanmu. Kami baca dengan hati."}
+                    </p>
                   </div>
                 </div>
               </motion.div>
 
+              {/* 04. BUKTI FOTO */}
               <motion.div initial={reduce?false:{y:8,opacity:0}} animate={{y:0,opacity:1}} transition={{type:"spring",bounce:0,duration:0.35,delay:0.16}} className="space-y-3 will-change-transform">
-                <div className="flex items-center gap-2 label-sm text-white"><span className="h-px w-6 bg-white/40" /> 04. BUKTI FOTO <span className="text-[11px] font-normal normal-case tracking-normal text-white/40">(opsional, bikin lebih kuat)</span></div>
+                <div className="flex items-center gap-2 label-sm text-white"><span className="h-px w-6 bg-white/40" /> {isMentalHealth ? "03." : "04."} BUKTI FOTO <span className="text-[11px] font-normal normal-case tracking-normal text-white/40">(opsional)</span></div>
                 <label
                   onDragOver={e=>{e.preventDefault(); setDragOver(true)}}
                   onDragLeave={()=>setDragOver(false)}
@@ -220,8 +261,8 @@ export default function Laporan(){
                   </div>
                 )}
                 <div className="flex items-center gap-2 glass-pill p-3">
-                  <span className="w-8 h-8 rounded-full bg-white/10 border border-white/[0.15] grid place-items-center shrink-0"><Shield className="w-4 h-4 text-white" /></span>
-                  {type === "mental_health" ? (
+                  <span className="w-8 h-8 rounded-full bg-white/10 border border-white/[0.15] grid place-items-center shrink-0">{isMentalHealth ? <HeartHandshake className="w-4 h-4 text-white" /> : <Shield className="w-4 h-4 text-white" />}</span>
+                  {isMentalHealth ? (
                     <p className="text-[11px] leading-[1.5] text-white/50"><b className="text-white">Privasi Terjaga</b> — Kontakmu hanya digunakan tim pengurus untuk merangkul dan mendampingimu.</p>
                   ) : (
                     <p className="text-[11px] leading-[1.5] text-white/50"><b className="text-white">Privasimu aman</b> — tidak ada nama, NIM, atau kontak yang kami simpan.</p>

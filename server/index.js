@@ -23,7 +23,7 @@ const KB = { keyboard: [[{ text: "📊 Statistik" }, { text: "📅 Laporan Hari 
 function esc(s) { return String(s).replace(/[_*[\]()~`>#+\-=|{}.!\\]/g, "\\$&") }
 function sanitize(s){ return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#x27;").replace(/\//g,"&#x2F;") }
 
-const ALLOWED_TYPES = ["keluhan","kritik","saran"]
+const ALLOWED_TYPES = ["keluhan","kritik","saran","aspirasi","mental_health"]
 const ALLOWED_TARGETS = ["jurusan","himpunan"]
 const ALLOWED_CATS = ["Akademik","Fasilitas","Dosen/Pengajaran","Administrasi","Kegiatan Kemahasiswaan","Himpunan","UKT (Uang Kuliah Tunggal)","Lainnya"]
 const ALLOWED_MIME = ["image/jpeg","image/png","image/webp"]
@@ -89,11 +89,15 @@ async function getUnread(){
   try{ const {count}=await supaAdmin.from("reports").select("*",{count:"exact",head:true}).eq("status","baru"); return count||0 }catch{ return 0 }
 }
 function fmtReport(report, unread){
-  const te={keluhan:"😤",kritik:"📢",saran:"💡"}[report.type]||"📝"
+  const te={keluhan:"😤",kritik:"📢",saran:"💡",aspirasi:"💭",mental_health:"🧠"}[report.type]||"📝"
+  const isMental = report.type === "mental_health"
   const ta={jurusan:"🏫",himpunan:"🎓"}[report.target]||"📌"
   const title=esc(report.title), cat=esc(report.category)
   const desc=esc(report.description.length>500?report.description.slice(0,497)+"...":report.description)
   const line=unread>1?`\n🔔 *${unread} laporan belum dibaca — buka dashboard*`:unread===1?`\n🔔 *1 laporan belum dibaca*`:""
+  if (isMental) {
+    return `${te} *Laporan Mental Health Baru\\!*${line}\n\n📋 *Jenis:* ${esc(report.type.replace("_"," ").replace(/\b\w/g, l => l.toUpperCase()))}\n👤 *Nama:* ${esc(report.category)}\n📞 *Kontak:* ${esc(report.contact||"tidak ada")}\n\n📝 *Deskripsi:*\n${desc}\n\n🕐 *Waktu:* ${esc(new Date(report.created_at).toLocaleString("id-ID",{timeZone:"Asia/Makassar"}))}\n📎 *Lampiran:* ${report.attachments?.length||0} foto`
+  }
   return `${te} *Laporan Baru Masuk\\!*${line}\n\n${ta} *Target:* ${esc(report.target[0].toUpperCase()+report.target.slice(1))}\n📂 *Kategori:* ${cat}\n📋 *Jenis:* ${esc(report.type[0].toUpperCase()+report.type.slice(1))}\n📌 *Judul:* ${title}\n\n📝 *Deskripsi:*\n${desc}\n\n🕐 *Waktu:* ${esc(new Date(report.created_at).toLocaleString("id-ID",{timeZone:"Asia/Makassar"}))}\n📎 *Lampiran:* ${report.attachments?.length||0} foto`
 }
 async function notify(report){
@@ -142,12 +146,30 @@ app.post("/api/reports", async (req,res)=>{
   const b=req.body
   if(b.honeypot) return res.json({success:true})
   if(!ALLOWED_TYPES.includes(b.type)) return res.status(400).json({error:"Jenis tidak valid"})
-  if(!ALLOWED_TARGETS.includes(b.target)) return res.status(400).json({error:"Target tidak valid"})
-  if(!ALLOWED_CATS.includes(b.category)) return res.status(400).json({error:"Kategori tidak valid"})
-  if(!b.title?.trim()||b.title.length>100) return res.status(400).json({error:"Judul tidak valid (max 100)"})
+
+  const isMentalHealth = b.type === "mental_health"
+
+  if (!isMentalHealth) {
+    if(!ALLOWED_TARGETS.includes(b.target)) return res.status(400).json({error:"Target tidak valid"})
+    if(!ALLOWED_CATS.includes(b.category)) return res.status(400).json({error:"Kategori tidak valid"})
+    if(!b.title?.trim()||b.title.length>100) return res.status(400).json({error:"Judul tidak valid (max 100)"})
+  }
+
   if(!b.description?.trim()||b.description.length>2000) return res.status(400).json({error:"Deskripsi tidak valid (max 2000)"})
   if(b.attachments && b.attachments.length>5) return res.status(400).json({error:"Maksimal 5 lampiran"})
-  const { data, error } = await supaAdmin.from("reports").insert({ type:b.type, target:b.target, category:b.category, title:sanitize(b.title.trim()), description:sanitize(b.description.trim()), attachments:b.attachments||[], status:"baru" }).select().single()
+  if (isMentalHealth && !b.contact?.trim()) return res.status(400).json({error:"Nomor WhatsApp/Identitas wajib diisi untuk Mental Health"})
+
+  const insertData = {
+    type: b.type,
+    target: isMentalHealth ? null : b.target,
+    category: isMentalHealth ? "Mental Health" : b.category,
+    title: isMentalHealth ? "Konsultasi Mental Health" : sanitize(b.title.trim()),
+    description: sanitize(b.description.trim()),
+    contact: isMentalHealth ? b.contact : null,
+    attachments: b.attachments||[],
+    status: "baru"
+  }
+  const { data, error } = await supaAdmin.from("reports").insert(insertData).select().single()
   if(error){ console.error(error); return res.status(500).json({error:"Gagal menyimpan"})}
   notify(data).catch(()=>{})
   res.status(201).json({success:true, id:data.id})

@@ -10,13 +10,31 @@ export default async function handler(req, res) {
     const b = body || {};
     if (b.honeypot) return json(res, 200, { success: true });
     if (!ALLOWED_TYPES.includes(b.type)) return json(res, 400, { error: "Jenis tidak valid" });
-    if (!ALLOWED_TARGETS.includes(b.target)) return json(res, 400, { error: "Target tidak valid" });
-    if (!ALLOWED_CATS.includes(b.category)) return json(res, 400, { error: "Kategori tidak valid" });
-    if (!b.title?.trim() || b.title.length > 100) return json(res, 400, { error: "Judul tidak valid (max 100)" });
+
+    const isMentalHealth = b.type === "mental_health";
+
+    if (!isMentalHealth) {
+      if (!ALLOWED_TARGETS.includes(b.target)) return json(res, 400, { error: "Target tidak valid" });
+      if (!ALLOWED_CATS.includes(b.category)) return json(res, 400, { error: "Kategori tidak valid" });
+      if (!b.title?.trim() || b.title.length > 100) return json(res, 400, { error: "Judul tidak valid (max 100)" });
+    }
+
     if (!b.description?.trim() || b.description.length > 2000) return json(res, 400, { error: "Deskripsi tidak valid (max 2000)" });
     if (b.attachments && b.attachments.length > 5) return json(res, 400, { error: "Maksimal 5 lampiran" });
+    if (isMentalHealth && !b.contact?.trim()) return json(res, 400, { error: "Nomor WhatsApp/Identitas wajib diisi untuk Mental Health" });
+
     const c = supaAdmin();
-    const { data, error } = await c.from("reports").insert({ type: b.type, target: b.target, category: b.category, title: sanitize(b.title.trim()), description: sanitize(b.description.trim()), attachments: b.attachments || [], status: "baru" }).select().single();
+    const insertData = {
+      type: b.type,
+      target: isMentalHealth ? null : b.target,
+      category: isMentalHealth ? "Mental Health" : b.category,
+      title: isMentalHealth ? "Konsultasi Mental Health" : sanitize(b.title.trim()),
+      description: sanitize(b.description.trim()),
+      contact: isMentalHealth ? b.contact : null,
+      attachments: b.attachments || [],
+      status: "baru"
+    };
+    const { data, error } = await c.from("reports").insert(insertData).select().single();
     if (error) { console.error(error); return json(res, 500, { error: "Gagal menyimpan" }); }
     notifyReport(data).catch(() => {});
     return json(res, 201, { success: true, id: data.id });

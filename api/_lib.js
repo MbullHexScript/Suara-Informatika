@@ -31,7 +31,7 @@ export function getIp(req) {
 export function esc(s) { return String(s).replace(/[_*[\]`~>#+\-=|{}.!\\]/g, (m) => "\\" + m).replace(/\[/g, "\\[").replace(/\]/g, "\\]").replace(/\(/g, "\\(").replace(/\)/g, "\\)"); }
 export function sanitize(s) { return String(s).replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;").replace(/\//g, "&#x2F;"); }
 
-export const ALLOWED_TYPES = ["keluhan", "kritik", "saran"];
+export const ALLOWED_TYPES = ["keluhan", "kritik", "saran", "aspirasi", "mental_health"];
 export const ALLOWED_TARGETS = ["jurusan", "himpunan"];
 export const ALLOWED_CATS = ["Akademik", "Fasilitas", "Dosen/Pengajaran", "Administrasi", "Kegiatan Kemahasiswaan", "Himpunan", "UKT (Uang Kuliah Tunggal)", "Lainnya"];
 export const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp"];
@@ -83,11 +83,15 @@ export async function sendDocument(chatId, content, filename, caption) {
   if (!r.ok) console.error("[tg doc]", await r.text());
 }
 export function fmtReport(report, unread) {
-  const te = { keluhan: "😤", kritik: "📢", saran: "💡" }[report.type] || "📝";
+  const te = { keluhan: "😤", kritik: "📢", saran: "💡", aspirasi: "💭", mental_health: "🧠" }[report.type] || "📝";
+  const isMental = report.type === "mental_health";
   const ta = { jurusan: "🏫", himpunan: "🎓" }[report.target] || "📌";
   const title = esc(report.title), cat = esc(report.category);
   const desc = esc(report.description.length > 500 ? report.description.slice(0, 497) + "..." : report.description);
   const line = unread > 1 ? `\n🔔 *${unread} laporan belum dibaca — buka dashboard*` : unread === 1 ? `\n🔔 *1 laporan belum dibaca*` : "";
+  if (isMental) {
+    return `${te} *Laporan Mental Health Baru\\!*${line}\n\n📋 *Jenis:* ${esc(report.type.replace("_"," ").replace(/\b\w/g, l => l.toUpperCase()))}\n👤 *Nama:* ${esc(report.category)}\n📞 *Kontak:* ${esc(report.contact||"tidak ada")}\n\n📝 *Deskripsi:*\n${desc}\n\n🕐 *Waktu:* ${esc(new Date(report.created_at).toLocaleString("id-ID", { timeZone: "Asia/Makassar" }))}\n📎 *Lampiran:* ${report.attachments?.length || 0} foto`;
+  }
   return `${te} *Laporan Baru Masuk\\!*${line}\n\n${ta} *Target:* ${esc(report.target[0].toUpperCase() + report.target.slice(1))}\n📂 *Kategori:* ${cat}\n📋 *Jenis:* ${esc(report.type[0].toUpperCase() + report.type.slice(1))}\n📌 *Judul:* ${title}\n\n📝 *Deskripsi:*\n${desc}\n\n🕐 *Waktu:* ${esc(new Date(report.created_at).toLocaleString("id-ID", { timeZone: "Asia/Makassar" }))}\n📎 *Lampiran:* ${report.attachments?.length || 0} foto`;
 }
 export async function getUnread() {
