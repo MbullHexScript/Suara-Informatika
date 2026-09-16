@@ -1,4 +1,4 @@
-import { cors, json, tgSecret, isAdminChat, handleCmd } from "../_lib.js";
+import { cors, json, tgSecret, isAdminChat, handleCmd, handleCallbackQuery } from "../_lib.js";
 export default async function handler(req, res) {
   cors(res);
   if (req.method === "OPTIONS") return res.status(200).end();
@@ -8,6 +8,12 @@ export default async function handler(req, res) {
   if (secret && got !== secret) return json(res, 403, { error: "Forbidden" });
   let body = req.body;
   if (typeof body === "string") try { body = JSON.parse(body); } catch { body = {}; }
+  
+  if (body?.callback_query) {
+    try { await handleCallbackQuery(body.callback_query); } catch (e) { console.error(e); }
+    return json(res, 200, { ok: true });
+  }
+  
   const chatId = String(body?.message?.chat?.id || "");
   const text = String(body?.message?.text || "").trim();
   if (!isAdminChat(chatId)) return json(res, 200, { ok: true });

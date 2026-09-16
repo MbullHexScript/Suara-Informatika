@@ -88,32 +88,6 @@ function isAdminChat(id){ return String(TG_ADMIN).split(",").map(s=>s.trim()).in
 async function getUnread(){
   try{ const {count}=await supaAdmin.from("reports").select("*",{count:"exact",head:true}).eq("status","baru"); return count||0 }catch{ return 0 }
 }
-function fmtReport(report, unread){
-  const te={keluhan:"😤",kritik:"📢",saran:"💡",aspirasi:"💭",mental_health:"🧠"}[report.type]||"📝"
-  const isMental = report.type === "mental_health"
-  const ta={jurusan:"🏫",himpunan:"🎓"}[report.target]||"📌"
-  const title=esc(report.title), cat=esc(report.category)
-  const desc=esc(report.description.length>500?report.description.slice(0,497)+"...":report.description)
-  const line=unread>1?`\n🔔 *${unread} laporan belum dibaca — buka dashboard*`:unread===1?`\n🔔 *1 laporan belum dibaca*`:""
-  if (isMental) {
-    return `${te} *Laporan Mental Health Baru\\!*${line}\n\n📋 *Jenis:* ${esc(report.type.replace("_"," ").replace(/\b\w/g, l => l.toUpperCase()))}\n👤 *Nama:* ${esc(report.category)}\n📞 *Kontak:* ${esc(report.contact||"tidak ada")}\n\n📝 *Deskripsi:*\n${desc}\n\n🕐 *Waktu:* ${esc(new Date(report.created_at).toLocaleString("id-ID",{timeZone:"Asia/Makassar"}))}\n📎 *Lampiran:* ${report.attachments?.length||0} foto`
-  }
-  return `${te} *Laporan Baru Masuk\\!*${line}\n\n${ta} *Target:* ${esc(report.target[0].toUpperCase()+report.target.slice(1))}\n📂 *Kategori:* ${cat}\n📋 *Jenis:* ${esc(report.type[0].toUpperCase()+report.type.slice(1))}\n📌 *Judul:* ${title}\n\n📝 *Deskripsi:*\n${desc}\n\n🕐 *Waktu:* ${esc(new Date(report.created_at).toLocaleString("id-ID",{timeZone:"Asia/Makassar"}))}\n📎 *Lampiran:* ${report.attachments?.length||0} foto`
-}
-async function notify(report){
-  try{
-    const unread=await getUnread()
-    const msg=fmtReport(report, unread)
-    const inline={ inline_keyboard:[[{text:"🔍 Lihat di Dashboard", url:`${APP_URL}/admin/laporan/${report.id}`}]]}
-    if(!report.attachments?.length) await sendMessage(TG_ADMIN, msg, inline)
-    else if(report.attachments.length===1) await fetch(`${TG_API}/sendPhoto`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:TG_ADMIN, photo:report.attachments[0], caption:msg, parse_mode:"MarkdownV2", reply_markup:inline})})
-    else {
-      const media=report.attachments.map((u,i)=>({type:"photo",media:u, ...(i===0?{caption:`📎 ${report.attachments.length} foto lampiran`, parse_mode:"MarkdownV2"}:{})}))
-      await fetch(`${TG_API}/sendMediaGroup`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:TG_ADMIN, media})})
-      await sendMessage(TG_ADMIN, msg, inline)
-    }
-  }catch(e){ console.error("[notify]",e)}
-}
 function dateRange(period){
   const now=new Date(), to=now.toISOString()
   let from, label
@@ -122,20 +96,152 @@ function dateRange(period){
   else { from=new Date(now.getFullYear(),now.getMonth(),1); label=`bulan ${now.toLocaleDateString("id-ID",{month:"long",year:"numeric",timeZone:"Asia/Makassar"})}` }
   return { from:from.toISOString(), to, label }
 }
-async function handleCmd(cmd, chatId){
-  if(cmd==="/help"||cmd==="/start"||cmd==="❓ help"){ await sendMessage(chatId, `🤖 *Bot Aspirasi Informatika*\n\nCommand:\n📅 Laporan Hari Ini — /laporan\\_hari\\_ini\n🗓 Minggu Ini — /laporan\\_minggu\\_ini\n📆 Bulan Ini — /laporan\\_bulan\\_ini\n📊 Statistik — /statistik\n❓ Help — /help`); return }
-  if(cmd==="/statistik"||cmd==="📊 statistik"){ const r=await allReports(); await sendMessage(chatId, esc(genSummary(r))); return }
-  let period=null
-  if(cmd==="/laporan_hari_ini"||cmd==="📅 laporan hari ini") period="day"
-  else if(cmd==="/laporan_minggu_ini"||cmd==="🗓 laporan minggu ini") period="week"
-  else if(cmd==="/laporan_bulan_ini"||cmd==="📆 laporan bulan ini") period="month"
-  if(!period){ await sendMessage(chatId, esc("Command tidak dikenal. Ketik /help")); return }
-  const {from,to,label}=dateRange(period)
-  const reports=await queryRange(from,to)
-  if(!reports.length){ await sendMessage(chatId, esc(`Tidak ada laporan ${label}.`)); return }
-  await sendMessage(chatId, esc(`Laporan ${label}\n`)+esc(genSummary(reports)))
-  const csv=genCSV(reports), name=`laporan_${period}_${new Date().toISOString().slice(0,10)}.csv`
-  await sendDocument(chatId, csv, name, esc(`File CSV: ${reports.length} laporan ${label}`))
+const statusEmoji = { baru: "🟡", diproses: "🔵", selesai: "🟢", ditolak: "🔴" };
+const typeLabel = { keluhan: "Keluhan", kritik: "Kritik", saran: "Saran", aspirasi: "Aspirasi", mental_health: "Mental Health" };
+const typeEmoji = { keluhan: "😤", kritik: "📢", saran: "💡", aspirasi: "💭", mental_health: "🧠" };
+
+function statusBadge(status) {
+  const emoji = statusEmoji[status] || "⚪";
+  return `${emoji} ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+}
+
+function reportInlineKeyboard(reportId) {
+  return JSON.stringify({
+    inline_keyboard: [
+      [{ text: "🔍 Lihat Detail", callback_data: `view_${reportId}` }],
+      [
+        { text: "🔵 Diproses", callback_data: `status_${reportId}_diproses` },
+        { text: "🟢 Selesai", callback_data: `status_${reportId}_selesai` }
+      ],
+      [
+        { text: "🟡 Baru", callback_data: `status_${reportId}_baru` },
+        { text: "🔴 Ditolak", callback_data: `status_${reportId}_ditolak` }
+      ],
+      [{ text: "📝 Catatan Admin", callback_data: `notes_${reportId}` }],
+      [{ text: "🌐 Buka Dashboard", url: `${APP_URL}/admin/laporan/${reportId}` }]
+    ]
+  });
+}
+
+async function updateReportStatus(reportId, status, adminNotes) {
+  const updates = { status, updated_at: new Date().toISOString() };
+  if (adminNotes !== undefined) updates.admin_notes = adminNotes;
+  const { data, error } = await supaAdmin.from("reports").update(updates).eq("id", reportId).select().single();
+  if (error) throw error;
+  return data;
+}
+
+async function getReportById(reportId) {
+  const { data } = await supaAdmin.from("reports").select("*").eq("id", reportId).single();
+  return data;
+}
+
+async function formatReportDetail(report) {
+  const te = typeEmoji[report.type] || "📝";
+  const isMental = report.type === "mental_health";
+  const ta = { jurusan: "🏫", himpunan: "🎓" }[report.target] || "📌";
+  const title = esc(report.title), cat = esc(report.category);
+  const desc = esc(report.description);
+  const attachments = report.attachments?.length || 0;
+  const createdAt = new Date(report.created_at).toLocaleString("id-ID", { timeZone: "Asia/Makassar" });
+  const updatedAt = new Date(report.updated_at).toLocaleString("id-ID", { timeZone: "Asia/Makassar" });
+
+  let text = `${te} *${esc(typeLabel[report.type])}* ${statusBadge(report.status)}\n\n`;
+  if (isMental) {
+    text += `👤 *Nama:* ${esc(report.category)}\n📞 *Kontak:* ${esc(report.contact || "tidak ada")}\n`;
+  } else {
+    text += `${ta} *Target:* ${esc(report.target[0].toUpperCase() + report.target.slice(1))}\n📂 *Kategori:* ${cat}\n📌 *Judul:* ${title}\n`;
+  }
+  text += `${statusBadge(report.status)} *Status:* ${esc(report.status)}\n`;
+  if (report.admin_notes) text += `📝 *Catatan Admin:* ${esc(report.admin_notes)}\n`;
+  text += `\n📝 *Deskripsi:*\n${desc}\n\n🕐 *Dibuat:* ${createdAt}\n🔄 *Diupdate:* ${updatedAt}\n📎 *Lampiran:* ${attachments} foto\n🆔 *ID:* ${esc(report.id)}`;
+  return text;
+}
+
+async function handleCallbackQuery(callbackQuery) {
+  const { id, data, message, from } = callbackQuery;
+  const chatId = String(message?.chat?.id || from?.id || "");
+  if (!isAdminChat(chatId)) return;
+
+  if (data.startsWith("view_")) {
+    const reportId = data.slice(5);
+    const report = await getReportById(reportId);
+    if (!report) { await fetch(`${TG_API}/answerCallbackQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ callback_query_id: id, text: "❌ Laporan tidak ditemukan", show_alert: true }) }); return; }
+    const text = await formatReportDetail(report);
+    await fetch(`${TG_API}/editMessageText`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: chatId, message_id: message.message_id, text, parse_mode: "MarkdownV2", reply_markup: reportInlineKeyboard(reportId) }) });
+    await fetch(`${TG_API}/answerCallbackQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ callback_query_id: id }) });
+    return;
+  }
+
+  if (data.startsWith("status_")) {
+    const parts = data.split("_");
+    const reportId = parts[1];
+    const newStatus = parts[2];
+    const report = await getReportById(reportId);
+    if (!report) { await fetch(`${TG_API}/answerCallbackQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ callback_query_id: id, text: "❌ Laporan tidak ditemukan", show_alert: true }) }); return; }
+    await updateReportStatus(reportId, newStatus);
+    const updatedReport = await getReportById(reportId);
+    const text = await formatReportDetail(updatedReport);
+    await fetch(`${TG_API}/editMessageText`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: chatId, message_id: message.message_id, text, parse_mode: "MarkdownV2", reply_markup: reportInlineKeyboard(reportId) }) });
+    await fetch(`${TG_API}/answerCallbackQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ callback_query_id: id, text: `✅ Status diubah ke ${newStatus}` }) });
+    return;
+  }
+
+  if (data.startsWith("notes_")) {
+    await fetch(`${TG_API}/answerCallbackQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ callback_query_id: id, text: "📝 Kirim pesan sebagai catatan admin (format: /catatan <id> <catatan>)", show_alert: true }) });
+    return;
+  }
+
+  await fetch(`${TG_API}/answerCallbackQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ callback_query_id: id }) });
+}
+
+function fmtReport(report, unread) {
+  const te = typeEmoji[report.type] || "📝";
+  const isMental = report.type === "mental_health";
+  const ta = { jurusan: "🏫", himpunan: "🎓" }[report.target] || "📌";
+  const title = esc(report.title), cat = esc(report.category);
+  const desc = esc(report.description.length > 500 ? report.description.slice(0, 497) + "..." : report.description);
+  const line = unread > 1 ? `\n🔔 *${unread} laporan belum dibaca — buka dashboard*` : unread === 1 ? `\n🔔 *1 laporan belum dibaca*` : "";
+  const statusLine = `\n${statusBadge(report.status)} *Status:* ${esc(report.status)}`;
+
+  if (isMental) {
+    return `${te} *Laporan Mental Health Baru\\!*${line}\n\n📋 *Jenis:* ${esc(typeLabel[report.type])}\n👤 *Nama:* ${esc(report.category)}\n📞 *Kontak:* ${esc(report.contact || "tidak ada")}\n${statusLine}\n\n📝 *Deskripsi:*\n${desc}\n\n🕐 *Waktu:* ${esc(new Date(report.created_at).toLocaleString("id-ID", { timeZone: "Asia/Makassar" }))}\n📎 *Lampiran:* ${report.attachments?.length || 0} foto`;
+  }
+  return `${te} *Laporan Baru Masuk\\!*${line}\n\n${ta} *Target:* ${esc(report.target[0].toUpperCase() + report.target.slice(1))}\n📂 *Kategori:* ${cat}\n📋 *Jenis:* ${esc(typeLabel[report.type])}\n📌 *Judul:* ${title}\n${statusLine}\n\n📝 *Deskripsi:*\n${desc}\n\n🕐 *Waktu:* ${esc(new Date(report.created_at).toLocaleString("id-ID", { timeZone: "Asia/Makassar" }))}\n📎 *Lampiran:* ${report.attachments?.length || 0} foto`;
+}
+
+async function notify(report) {
+  try {
+    const unread = await getUnread();
+    const msg = fmtReport(report, unread);
+    const inline = reportInlineKeyboard(report.id);
+    if (!report.attachments?.length) await sendMessage(TG_ADMIN, msg, inline);
+    else if (report.attachments.length === 1) await fetch(`${TG_API}/sendPhoto`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: TG_ADMIN, photo: report.attachments[0], caption: msg, parse_mode: "MarkdownV2", reply_markup: inline }) });
+    else {
+      const media = report.attachments.map((u, i) => ({ type: "photo", media: u, ...(i === 0 ? { caption: `📎 ${report.attachments.length} foto lampiran`, parse_mode: "MarkdownV2" } : {}) }));
+      await fetch(`${TG_API}/sendMediaGroup`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: TG_ADMIN, media }) });
+      await sendMessage(TG_ADMIN, msg, inline);
+    }
+  } catch (e) { console.error("[notify]", e) }
+}
+
+async function handleCmd(cmd, chatId) {
+  if (cmd === "/help" || cmd === "/start" || cmd === "❓ help" || cmd === "❓ bantuan") {
+    await sendMessage(chatId, `🤖 *Bot Aspirasi Informatika*\n\n*Perintah Cepat:*\n📅 Laporan Hari Ini — /laporan_hari_ini\n🗓 Minggu Ini — /laporan_minggu_ini\n📆 Bulan Ini — /laporan_bulan_ini\n📊 Statistik — /statistik\n❓ Bantuan — /help\n\n*Fitur Inline:*\n• Ubah status langsung dari notifikasi\n• Lihat detail tanpa buka dashboard\n• Tambah catatan admin\n\nGunakan keyboard di bawah atau ketik perintah.`, KB);
+    return;
+  }
+  if (cmd === "/statistik" || cmd === "📊 statistik") { const r = await allReports(); await sendMessage(chatId, esc(genSummary(r))); return; }
+  let period = null;
+  if (cmd === "/laporan_hari_ini" || cmd === "📅 laporan hari ini") period = "day";
+  else if (cmd === "/laporan_minggu_ini" || cmd === "🗓 laporan minggu ini") period = "week";
+  else if (cmd === "/laporan_bulan_ini" || cmd === "📆 laporan bulan ini") period = "month";
+  if (!period) { await sendMessage(chatId, esc("Perintah tidak dikenal. Ketik /help")); return; }
+  const { from, to, label } = dateRange(period);
+  const reports = await queryRange(from, to);
+  if (!reports.length) { await sendMessage(chatId, esc(`Tidak ada laporan ${label}.`)); return; }
+  await sendMessage(chatId, esc(`Laporan ${label}\n`) + esc(genSummary(reports)));
+  const csv = genCSV(reports), name = `laporan_${period}_${new Date().toISOString().slice(0, 10)}.csv`;
+  await sendDocument(chatId, csv, name, esc(`File CSV: ${reports.length} laporan ${label}`));
 }
 
 app.get("/api/health", (_,res)=>res.json({ok:true}))
@@ -255,6 +361,13 @@ app.get("/api/track/:id", async (req,res)=>{
 
 app.post("/api/telegram/webhook", express.json(), async (req,res)=>{
   if(TG_SECRET && req.headers["x-telegram-bot-api-secret-token"]!==TG_SECRET) return res.status(403).json({error:"Forbidden"})
+  
+  const body = req.body;
+  if (body?.callback_query) {
+    try { await handleCallbackQuery(body.callback_query); } catch (e) { console.error(e); }
+    return res.json({ok:true});
+  }
+  
   const chatId=String(req.body?.message?.chat?.id||"")
   const text=String(req.body?.message?.text||"").trim()
   if(!isAdminChat(chatId)) return res.json({ok:true})
