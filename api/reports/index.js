@@ -35,7 +35,7 @@ export default async function handler(req, res) {
       status: "baru"
     };
     const { data, error } = await c.from("reports").insert(insertData).select().single();
-    if (error) { console.error(error); return json(res, 500, { error: "Gagal menyimpan" }); }
+    if (error) { console.error("Supabase error:", JSON.stringify(error, null, 2)); return json(res, 500, { error: "Gagal menyimpan", details: error.message, code: error.code, hint: error.hint }); }
     notifyReport(data).catch(() => {});
     return json(res, 201, { success: true, id: data.id });
   }
