@@ -45,7 +45,7 @@ function Layout({ children }: { children: React.ReactNode }) {
     <div className="flex flex-col bg-transparent min-h-screen" style={{ minHeight: "100dvh" } as React.CSSProperties}>
       <BackgroundWaves />
       <Navbar />
-      <main className="flex-1 pb-[var(--content-bottom)] md:pb-0 bg-transparent relative z-[1]">{children}</main>
+      <main className="flex-1 pt-[56px] pb-[var(--content-bottom)] md:pb-0 bg-transparent relative z-[1]">{children}</main>
       <footer className="hidden md:block glass border-t border-white/[0.1] py-6 relative z-[1]">
         <div className="container-wide flex items-center justify-between gap-3 label-sm text-white/60">
           <span className="font-bold tracking-[-0.01em] text-white">SUARA INFORMATIKA</span>

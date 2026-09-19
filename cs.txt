@@ -1,0 +1,145 @@
+# ============================================
+# SUARA INFORMATIKA - DEPLOY & TEST SCRIPTS
+# Domain: https://suarainformatika.vercel.app
+# ============================================
+
+# 1. HEALTH CHECK
+curl -X GET "https://suarainformatika.vercel.app/api/health"
+
+# 2. TEST KIRIM LAPORAN - KELUHAN
+curl -X POST "https://suarainformatika.vercel.app/api/reports" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "keluhan",
+    "target": "jurusan",
+    "category": "Akademik",
+    "title": "Test Keluhan",
+    "description": "Test notifikasi keluhan via API",
+    "attachments": []
+  }'
+
+# 3. TEST KIRIM LAPORAN - MENTAL HEALTH
+curl -X POST "https://suarainformatika.vercel.app/api/reports" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "mental_health",
+    "target": null,
+    "category": "Test User",
+    "title": "Konsultasi Mental Health",
+    "description": "Test notifikasi mental health via API",
+    "contact": "081234567890",
+    "attachments": []
+  }'
+
+# 4. TEST KIRIM LAPORAN - ASPIRASI
+curl -X POST "https://suarainformatika.vercel.app/api/reports" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "aspirasi",
+    "target": "himpunan",
+    "category": "Kegiatan Kemahasiswaan",
+    "title": "Test Aspirasi",
+    "description": "Test notifikasi aspirasi via API",
+    "attachments": []
+  }'
+
+# 5. SET TELEGRAM WEBHOOK (Jalankan di browser atau terminal)
+# Ganti YOUR_BOT_TOKEN dan YOUR_WEBHOOK_SECRET sesuai .env
+# URL: https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://suarainformatika.vercel.app/api/telegram/webhook&secret_token=<WEBHOOK_SECRET>
+
+# Contoh lengkap (copy paste ke browser):
+https://api.telegram.org/bot8602045416:AAF6CK7HA4ClDWb_hvLCXW1V9VofXxJS6ug/setWebhook?url=https://suarainformatika.vercel.app/api/telegram/webhook&secret_token=584a1136889eacf0db1fec43960f663a5baaa8e3c01c3cf13db13983ba874a91
+
+# 5b. SET WEBHOOK via curl (terminal)
+curl -X POST "https://api.telegram.org/bot8602045416:AAF6CK7HA4ClDWb_hvLCXW1V9VofXxJS6ug/setWebhook" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://suarainformatika.vercel.app/api/telegram/webhook",
+    "secret_token": "584a1136889eacf0db1fec43960f663a5baaa8e3c01c3cf13db13983ba874a91"
+  }'
+
+# 6. CEK WEBHOOK INFO
+curl -X GET "https://api.telegram.org/bot8602045416:AAF6CK7HA4ClDWb_hvLCXW1V9VofXxJS6ug/getWebhookInfo"
+
+# 7. TEST TELEGRAM WEBHOOK - KIRIM /help
+curl -X POST "https://suarainformatika.vercel.app/api/telegram/webhook" \
+  -H "Content-Type: application/json" \
+  -H "x-telegram-bot-api-secret-token: 584a1136889eacf0db1fec43960f663a5baaa8e3c01c3cf13db13983ba874a91" \
+  -d '{
+    "message": {
+      "chat": {"id": "5721987142"},
+      "text": "/help"
+    }
+  }'
+
+# 8. TEST TELEGRAM WEBHOOK - STATISTIK
+curl -X POST "https://suarainformatika.vercel.app/api/telegram/webhook" \
+  -H "Content-Type: application/json" \
+  -H "x-telegram-bot-api-secret-token: 584a1136889eacf0db1fec43960f663a5baaa8e3c01c3cf13db13983ba874a91" \
+  -d '{
+    "message": {
+      "chat": {"id": "5721987142"},
+      "text": "/statistik"
+    }
+  }'
+
+# 9. TEST TELEGRAM WEBHOOK - LAPORAN HARI INI
+curl -X POST "https://suarainformatika.vercel.app/api/telegram/webhook" \
+  -H "Content-Type: application/json" \
+  -H "x-telegram-bot-api-secret-token: 584a1136889eacf0db1fec43960f663a5baaa8e3c01c3cf13db13983ba874a91" \
+  -d '{
+    "message": {
+      "chat": {"id": "5721987142"},
+      "text": "/laporan_hari_ini"
+    }
+  }'
+
+# 10. TEST TELEGRAM WEBHOOK - CALLBACK QUERY (simulasi klik tombol)
+curl -X POST "https://suarainformatika.vercel.app/api/telegram/webhook" \
+  -H "Content-Type: application/json" \
+  -H "x-telegram-bot-api-secret-token: 584a1136889eacf0db1fec43960f663a5baaa8e3c01c3cf13db13983ba874a91" \
+  -d '{
+    "callback_query": {
+      "id": "test123",
+      "data": "view_TEST_ID",
+      "message": {
+        "chat": {"id": "5721987142"},
+        "message_id": 1
+      },
+      "from": {"id": "5721987142"}
+    }
+  }'
+
+# 11. VERCEL DEPLOY COMMANDS
+# cd D:\Projectku\project web\web-pengaduan
+# npx vercel --prod
+
+# 12. VERCEL ENV VARIABLES (Copy ke Vercel Dashboard → Settings → Environment Variables)
+# Production + Preview:
+# VITE_SUPABASE_URL=https://lcancdmpmcbmyhsvtsmr.supabase.co
+# VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjYW5jZG1wbWNibXloc3Z0c21yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNDU1MTEsImV4cCI6MjEwMzgyMTUxMX0.SP_4nigQi79UDJRfZSoIs0nM0ER7OjDogRn6Zd_9dCQ
+# VITE_SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjYW5jZG1wbWNibXloc3Z0c21yIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODI0NTUxMSwiZXhwIjoyMTAzODIxNTExfQ.7KDpeU2iF8n7nldesD9pAfabjC22vlAOPM3WFUsnixU
+# VITE_TELEGRAM_BOT_TOKEN=8602045416:AAF6CK7HA4ClDWb_hvLCXW1V9VofXxJS6ug
+# VITE_TELEGRAM_ADMIN_CHAT_ID=5721987142
+# TELEGRAM_BOT_TOKEN=8602045416:AAF6CK7HA4ClDWb_hvLCXW1V9VofXxJS6ug
+# TELEGRAM_ADMIN_CHAT_ID=5721987142
+# TELEGRAM_WEBHOOK_SECRET=584a1136889eacf0db1fec43960f663a5baaa8e3c01c3cf13db13983ba874a91
+# VITE_APP_URL=https://suarainformatika.vercel.app
+
+# 13. SUPABASE SQL (Jalankan di Supabase Dashboard → SQL Editor)
+# -- Migration 002: add contact column, extend report_type enum, make target nullable
+# ALTER TYPE report_type ADD VALUE IF NOT EXISTS 'aspirasi';
+# ALTER TYPE report_type ADD VALUE IF NOT EXISTS 'mental_health';
+# ALTER TABLE reports ADD COLUMN IF NOT EXISTS contact text;
+# ALTER TABLE reports ALTER COLUMN target DROP NOT NULL;
+
+# ============================================
+# QUICK TEST SEQUENCE (Jalankan berurutan):
+# 1. curl https://suarainformatika.vercel.app/api/health
+# 2. Set webhook (no 5)
+# 3. Test webhook /help (no 7)
+# 4. Kirim laporan keluhan (no 2)
+# 5. Cek Telegram admin (5721987142) - harus ada notif
+# 6. Kirim laporan mental_health (no 3)
+# 7. Cek Telegram admin - harus ada notif dengan 🧠
+# ============================================
