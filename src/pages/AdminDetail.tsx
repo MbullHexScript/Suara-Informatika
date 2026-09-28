@@ -15,15 +15,20 @@ export default function AdminDetail(){
   const [saving,setSaving]=useState(false)
   const [lightbox,setLightbox]=useState<string|null>(null)
 
-  useEffect(()=>{ supabase.auth.getUser().then(({data:{user}})=>{ if(!user) nav("/admin/login",{replace:true}) }) },[nav])
   useEffect(()=>{
+    let active=true;
     (async()=>{
-      const { data:{session}}=await supabase.auth.getSession()
-      if(!session) return
-      const r=await fetch(`/api/reports/${id}`,{ headers:{ Authorization:`Bearer ${session.access_token}`}})
-      if(!r.ok){ toast.error("Laporan tidak ditemukan"); nav("/admin",{replace:true}); return}
-      const j=await r.json(); setData(j); setStatus(j.status); setNotes(j.admin_notes||""); setLoading(false)
+      try {
+        const { data:{session}}=await supabase.auth.getSession()
+        if(!session) { nav('/admin/login',{replace:true}); return }
+        const r=await fetch(`/api/reports/${id}`,{ headers:{ Authorization:`Bearer ${session.access_token}`}})
+        if(!r.ok)throw new Error('Laporan tidak dapat dimuat.')
+        const j=await r.json()
+        if(active){setData(j); setStatus(j.status); setNotes(j.admin_notes||'')}
+      } catch { if(active){toast.error('Laporan tidak dapat dimuat.');nav('/admin',{replace:true})} }
+      finally { if(active)setLoading(false) }
     })()
+    return ()=>{active=false}
   },[id, nav])
 
   const save=async()=>{
@@ -60,10 +65,11 @@ export default function AdminDetail(){
             <h1 className="text-[20px] md:text-[22px] font-bold leading-tight" style={{ letterSpacing:"-0.02em" }}>{data.title}</h1>
             <div className="flex flex-wrap gap-2 mt-3">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass-pill text-[11px] font-medium"><Tag className="w-3.5 h-3.5" />{data.category}</span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass-pill text-[11px] font-medium"><Target className="w-3.5 h-3.5" />{data.target}</span>
+              {data.target && <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass-pill text-[11px] font-medium"><Target className="w-3.5 h-3.5" />{data.target}</span>}
               {data.attachments?.length? <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 border border-black/[0.06] text-[11px] font-medium backdrop-blur"><ImgIcon className="w-3.5 h-3.5" />{data.attachments.length} foto</span>:null}
             </div>
           </div>
+          {data.type === 'mental_health' && <div className="admin-contact"><h2>Kontak konsultasi</h2><p>Nama: {data.name || 'Tidak dicantumkan'}</p><p>WhatsApp: {data.contact || 'Tidak dicantumkan'}</p>{data.contact && /^[1-9]\d{7,14}$/.test(data.contact) && <a className="action-primary" href={'https://wa.me/'+data.contact} target="_blank" rel="noreferrer">Hubungi melalui WhatsApp</a>}</div>}
           <div className="rounded-[12px] bg-white/70 border border-black/[0.06] p-4 backdrop-blur">
             <p className="label-sm text-[#525252] mb-2">DESKRIPSI</p>
             <p className="text-[14px] leading-[1.6] whitespace-pre-wrap">{data.description}</p>

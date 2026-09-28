@@ -1,64 +1,44 @@
-import { cors, json, sanitize, supaAdmin, requireAuth, ALLOWED_TYPES, ALLOWED_TARGETS, ALLOWED_CATS, notifyReport } from "../_lib.js";
+import { createHash, randomUUID } from 'node:crypto';
+import { cors, json, supaAdmin, requireAuth, applyFilters, getIp, logError } from '../_lib.js';
+import { validateReport } from '../../backend/reports.js';
+import { drainNotifications } from '../../backend/telegram.js';
 
+export const maxDuration = 60;
 export default async function handler(req, res) {
   cors(res);
-  if (req.method === "OPTIONS") return res.status(200).end();
-
-  if (req.method === "POST") {
-    let body = req.body;
-    if (typeof body === "string") try { body = JSON.parse(body); } catch {}
-    const b = body || {};
-    if (b.honeypot) return json(res, 200, { success: true });
-    if (!ALLOWED_TYPES.includes(b.type)) return json(res, 400, { error: "Jenis tidak valid" });
-
-    const isMentalHealth = b.type === "mental_health";
-
-    if (!isMentalHealth) {
-      if (!ALLOWED_TARGETS.includes(b.target)) return json(res, 400, { error: "Target tidak valid" });
-      if (!ALLOWED_CATS.includes(b.category)) return json(res, 400, { error: "Kategori tidak valid" });
-      if (!b.title?.trim() || b.title.length > 100) return json(res, 400, { error: "Judul tidak valid (max 100)" });
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  try {
+    if (req.method === 'POST') {
+      let body;
+      try { body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body; } catch { return json(res, 400, { error: 'JSON tidak valid.' }); }
+      if (body?.honeypot) return json(res, 200, { success: true });
+      const result = validateReport(body);
+      if (result.error) return json(res, 400, { error: result.error });
+      const db = supaAdmin();
+      const ipHash = createHash('sha256').update(getIp(req)).digest('hex');
+      const { data: allowed, error: limitError } = await db.rpc('consume_request_limit', { p_key: 'report:' + ipHash, p_limit: 5, p_seconds: 3600 });
+      if (limitError) throw limitError;
+      if (!allowed) return json(res, 429, { error: 'Batas pengiriman tercapai. Coba lagi dalam satu jam.' });
+      const { data, error } = await db.from('reports').insert(result.data).select('id').single();
+      if (error) throw error;
+      // The database trigger persists all recipients atomically with the report.
+      // Telegram failures must never make the student submit a second report.
+      try { await drainNotifications(db, data.id); } catch (e) { logError('notification deferred', e); }
+      return json(res, 201, { success: true, id: data.id });
     }
-
-    if (!b.description?.trim() || b.description.length > 2000) return json(res, 400, { error: "Deskripsi tidak valid (max 2000)" });
-    if (b.attachments && b.attachments.length > 5) return json(res, 400, { error: "Maksimal 5 lampiran" });
-    if (isMentalHealth && !b.contact?.trim()) return json(res, 400, { error: "Nomor WhatsApp/Identitas wajib diisi untuk Mental Health" });
-
-    const c = supaAdmin();
-    const insertData = {
-      type: b.type,
-      target: isMentalHealth ? null : b.target,
-      category: isMentalHealth ? "Mental Health" : b.category,
-      title: isMentalHealth ? "Konsultasi Mental Health" : sanitize(b.title.trim()),
-      description: sanitize(b.description.trim()),
-      contact: isMentalHealth ? b.contact : null,
-      attachments: b.attachments || [],
-      status: "baru"
-    };
-    const { data, error } = await c.from("reports").insert(insertData).select().single();
-    if (error) { console.error("Supabase error:", JSON.stringify(error, null, 2)); return json(res, 500, { error: "Gagal menyimpan", details: error.message, code: error.code, hint: error.hint }); }
-    notifyReport(data).catch(() => {});
-    return json(res, 201, { success: true, id: data.id });
+    if (req.method === 'GET') {
+      if (!await requireAuth(req)) return json(res, 401, { error: 'Unauthorized' });
+      const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+      const per_page = Math.min(50, Math.max(1, Number.parseInt(req.query.per_page, 10) || 10));
+      const query = applyFilters(supaAdmin().from('reports').select('*', { count: 'exact' }), req.query);
+      const { data, error, count } = await query.order('created_at', { ascending: false }).range((page - 1) * per_page, page * per_page - 1);
+      if (error) throw error;
+      return json(res, 200, { data, total: count, page, per_page, total_pages: Math.ceil(count / per_page) });
+    }
+    return json(res, 405, { error: 'Method not allowed' });
+  } catch (e) {
+    const reference = randomUUID();
+    logError('reports:' + reference, e);
+    return json(res, 503, { error: 'Layanan laporan belum dapat diakses. Coba lagi sebentar.', reference });
   }
-
-  if (req.method === "GET") {
-    const user = await requireAuth(req);
-    if (!user) return json(res, 401, { error: "Unauthorized" });
-    const page = parseInt(String(req.query.page || "1"), 10), perPage = parseInt(String(req.query.per_page || "10"), 10);
-    const c = supaAdmin();
-    let q = c.from("reports").select("*", { count: "exact" }).order("created_at", { ascending: false });
-    if (req.query.type) q = q.eq("type", req.query.type);
-    if (req.query.target) q = q.eq("target", req.query.target);
-    if (req.query.category) q = q.eq("category", req.query.category);
-    if (req.query.status) q = q.eq("status", req.query.status);
-    if (req.query.date_from) q = q.gte("created_at", req.query.date_from);
-    if (req.query.date_to) q = q.lte("created_at", String(req.query.date_to) + "T23:59:59Z");
-    if (req.query.search) { const s = String(req.query.search); q = q.or(`title.ilike.%${s}%,description.ilike.%${s}%`); }
-    const from = (page - 1) * perPage, to = from + perPage - 1;
-    q = q.range(from, to);
-    const { data, error, count } = await q;
-    if (error) return json(res, 500, { error: "Gagal fetch" });
-    return json(res, 200, { data, total: count || 0, page, per_page: perPage, total_pages: Math.ceil((count || 0) / perPage) });
-  }
-
-  return json(res, 405, { error: "Method not allowed" });
 }

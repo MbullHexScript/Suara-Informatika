@@ -188,17 +188,19 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
     const container = containerRef.current;
     if (!container) return;
 
+    const canvas = document.createElement('canvas');
+    if (!canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false })) return;
     const renderer = new Renderer({
+      canvas,
       webgl: 2,
       alpha: true,
       premultipliedAlpha: true,
       antialias: false,
-      dpr: Math.min(window.devicePixelRatio || 1, 2)
+      dpr: Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 1 : 1.5)
     });
 
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
-    const canvas = gl.canvas as HTMLCanvasElement;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     canvas.style.display = 'block';
@@ -325,6 +327,8 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerleave', onPointerLeave);
       ctxMap.delete(container);
+      geometry.remove();
+      program.remove();
       try {
         container.removeChild(canvas);
       } catch {}

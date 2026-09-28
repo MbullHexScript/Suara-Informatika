@@ -1,70 +1,28 @@
-import { cors, json, supaAdmin, ALLOWED_MIME, MAX_SIZE } from "./_lib.js";
-import { createClient } from "@supabase/supabase-js";
+import multer from 'multer';
+import { randomUUID, createHash } from 'node:crypto';
+import { cors, json, supaAdmin, MAX_SIZE, ALLOWED_MIME, getIp, logError } from './_lib.js';
 
 export const config = { api: { bodyParser: false } };
-
-function parseMultipart(req) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    req.on("data", (c) => chunks.push(c));
-    req.on("end", () => resolve(Buffer.concat(chunks)));
-    req.on("error", reject);
-  });
-}
-
-function getBoundary(ct) {
-  const m = String(ct || "").match(/boundary=([^;]+)/);
-  return m ? m[1].replace(/"/g, "") : null;
-}
-
-function extractFile(buf, boundary) {
-  const str = buf.toString("binary");
-  const bnd = "--" + boundary;
-  const parts = str.split(bnd);
-  for (const part of parts) {
-    if (!part.includes("Content-Disposition")) continue;
-    const nameMatch = part.match(/name="file"/);
-    if (!nameMatch) continue;
-    const ctMatch = part.match(/Content-Type:\s*([^\r\n]+)/i);
-    const fnMatch = part.match(/filename="([^"]+)"/);
-    const headerEnd = part.indexOf("\r\n\r\n");
-    if (headerEnd === -1) continue;
-    let body = part.slice(headerEnd + 4);
-    if (body.endsWith("\r\n")) body = body.slice(0, -2);
-    if (body.endsWith("--")) body = body.slice(0, -2);
-    const mime = (ctMatch ? ctMatch[1].trim() : "application/octet-stream").toLowerCase();
-    const filename = fnMatch ? fnMatch[1] : "upload";
-    const bin = Buffer.from(body, "binary");
-    return { buffer: bin, mimetype: mime, originalname: filename, size: bin.length };
-  }
-  return null;
-}
-
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX_SIZE, files: 1, fields: 0 } }).single('file');
 export default async function handler(req, res) {
   cors(res);
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return json(res, 405, { error: "Method not allowed" });
-
-  const ct = req.headers["content-type"] || req.headers["Content-Type"] || "";
-  const boundary = getBoundary(ct);
-  if (!boundary) return json(res, 400, { error: "Invalid content-type" });
-
-  const buf = await parseMultipart(req);
-  const file = extractFile(buf, boundary);
-  if (!file) return json(res, 400, { error: "File tidak ditemukan" });
-  if (!ALLOWED_MIME.includes(file.mimetype)) return json(res, 400, { error: "Hanya JPG, PNG, WebP" });
-  if (file.size > MAX_SIZE) return json(res, 400, { error: "File >5MB" });
-
-  const ext = file.mimetype.split("/")[1].replace("jpeg", "jpg");
-  const { randomUUID } = await import("crypto");
-  const path = `uploads/${randomUUID()}.${ext}`;
-
-  const url = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const key = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-  const c = createClient(url, key);
-
-  const { error } = await c.storage.from("report-attachments").upload(path, file.buffer, { contentType: file.mimetype, upsert: false });
-  if (error) { console.error(error); return json(res, 500, { error: "Gagal upload" }); }
-  const { data } = c.storage.from("report-attachments").getPublicUrl(path);
-  return json(res, 201, { url: data.publicUrl });
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' });
+  try {
+    const db = supaAdmin();
+    const { data: allowed, error } = await db.rpc('consume_request_limit', { p_key: 'upload:' + createHash('sha256').update(getIp(req)).digest('hex'), p_limit: 25, p_seconds: 3600 });
+    if (error) throw error;
+    if (!allowed) return json(res, 429, { error: 'Terlalu banyak unggahan.' });
+    try { await new Promise((resolve, reject) => upload(req, res, e => e ? reject(e) : resolve())); }
+    catch { return json(res, 400, { error: 'Unggah satu foto JPG/PNG/WebP, maksimal 4 MB.' }); }
+    const f = req.file;
+    if (!f || !ALLOWED_MIME.includes(f.mimetype)) return json(res, 400, { error: 'Hanya JPG, PNG, atau WebP.' });
+    const bytes = f.buffer;
+    const valid = f.mimetype === 'image/jpeg' ? bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255 : f.mimetype === 'image/png' ? bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) : bytes.toString('ascii',0,4) === 'RIFF' && bytes.toString('ascii',8,12) === 'WEBP';
+    if (!valid) return json(res, 400, { error: 'Isi file bukan gambar yang didukung.' });
+    const path = `uploads/${randomUUID()}.${f.mimetype.split('/')[1].replace('jpeg', 'jpg')}`;
+    const saved = await db.storage.from('report-attachments').upload(path, bytes, { contentType: f.mimetype });
+    if (saved.error) throw saved.error;
+    return json(res, 201, { path });
+  } catch (e) { logError('upload', e); return json(res, 503, { error: 'Unggahan belum dapat disimpan.' }); }
 }

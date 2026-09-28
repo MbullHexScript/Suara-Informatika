@@ -1,4 +1,4 @@
-import { cors, json, supaAdmin, requireAuth, genCSV } from "../_lib.js";
+import { cors, json, supaAdmin, requireAuth, genCSV, applyFilters } from "../_lib.js";
 export default async function handler(req, res) {
   cors(res);
   if (req.method === "OPTIONS") return res.status(200).end();
@@ -6,16 +6,14 @@ export default async function handler(req, res) {
   const user = await requireAuth(req);
   if (!user) return json(res, 401, { error: "Unauthorized" });
   const c = supaAdmin();
-  let q = c.from("reports").select("*").order("created_at", { ascending: false });
-  if (req.query.type) q = q.eq("type", req.query.type);
-  if (req.query.target) q = q.eq("target", req.query.target);
-  if (req.query.category) q = q.eq("category", req.query.category);
-  if (req.query.status) q = q.eq("status", req.query.status);
-  if (req.query.date_from) q = q.gte("created_at", req.query.date_from);
-  if (req.query.date_to) q = q.lte("created_at", String(req.query.date_to) + "T23:59:59Z");
-  if (req.query.search) { const s = String(req.query.search); q = q.or(`title.ilike.%${s}%,description.ilike.%${s}%`); }
-  const { data } = await q;
-  const csv = genCSV(data || []);
+  const reports = [];
+  for (let offset = 0; ; offset += 500) {
+    const { data, error } = await applyFilters(c.from("reports").select("*"), req.query).order("created_at", { ascending: false }).order('id').range(offset, offset + 499);
+    if (error) return json(res, 503, { error: 'Ekspor gagal.' });
+    reports.push(...data);
+    if (data.length < 500) break;
+  }
+  const csv = genCSV(reports);
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
   res.setHeader("Content-Disposition", `attachment; filename="laporan_${new Date().toISOString().slice(0, 10)}.csv"`);
   res.status(200).send(csv);

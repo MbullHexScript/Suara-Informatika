@@ -31,15 +31,15 @@ export default function AdminDashboard(){
   const getToken=useCallback(async()=>{ const {data:{session}}=await supabase.auth.getSession(); return session?.access_token||null },[])
 
   const fetchReports=useCallback(async()=>{
-    setLoading(true)
     try{
       const tok=await getToken(); if(!tok) return
+      setLoading(true)
       const p=new URLSearchParams()
       Object.entries(filters).forEach(([k,v])=>{ if(v!==undefined && v!=="") p.append(k,String(v)) })
       const r=await fetch(`/api/reports?${p.toString()}`,{ headers:{ Authorization:`Bearer ${tok}`}})
       if(!r.ok){ if(r.status===401) nav("/admin/login",{replace:true}); return }
       const j=await r.json(); setData(j)
-    } finally{ setLoading(false)}
+    } catch { toast.error('Laporan gagal dimuat. Periksa koneksi lalu coba lagi.') } finally{ setLoading(false)}
   },[filters,getToken,nav])
 
   useEffect(()=>{ if(checked) fetchReports() },[checked,fetchReports])
@@ -74,7 +74,7 @@ export default function AdminDashboard(){
             <div className="leading-none">
               <p className="font-bold text-[12px] tracking-[0.06em]">SUARA</p>
               <p className="font-bold text-[12px] tracking-[0.06em]">INFORMATIKA</p>
-              <p className="label-sm text-[9px] text-white/60 mt-1">100% ANONIM & TRANSPARAN</p>
+              <p className="label-sm text-[9px] text-white/60 mt-1">RUANG PENGELOLA</p>
             </div>
           </div>
           <nav className="p-4 space-y-2">
@@ -141,7 +141,7 @@ export default function AdminDashboard(){
           {showFilters && (
             <div className="glass-card rounded-[16px] p-4 grid grid-cols-1 md:grid-cols-3 gap-3 will-change-transform">
               <div className="space-y-1.5"><label className="label-sm text-[#525252]">STATUS</label><select value={filters.status||""} onChange={e=>onFilter("status",e.target.value)} className="w-full h-10 px-3 rounded-[12px] bg-white/70 border border-black/[0.06] text-[13px] backdrop-blur focus:outline-none focus:border-[#0A84FF] focus:ring-2 focus:ring-[#0A84FF]/20"><option value="">Semua</option><option value="baru">Baru</option><option value="diproses">Diproses</option><option value="selesai">Selesai</option><option value="ditolak">Ditolak</option></select></div>
-              <div className="space-y-1.5"><label className="label-sm text-[#525252]">JENIS</label><select value={filters.type||""} onChange={e=>onFilter("type",e.target.value)} className="w-full h-10 px-3 rounded-[12px] bg-white/70 border border-black/[0.06] text-[13px] backdrop-blur focus:outline-none focus:border-[#0A84FF] focus:ring-2 focus:ring-[#0A84FF]/20"><option value="">Semua</option><option value="keluhan">Keluhan</option><option value="kritik">Kritik</option><option value="saran">Saran</option></select></div>
+              <div className="space-y-1.5"><label className="label-sm text-[#525252]">JENIS</label><select aria-label="Jenis laporan" value={filters.type||""} onChange={e=>onFilter("type",e.target.value)} className="w-full h-10 px-3 rounded-[12px] bg-white/70 border border-black/[0.06] text-[13px] backdrop-blur focus:outline-none focus:border-[#0A84FF] focus:ring-2 focus:ring-[#0A84FF]/20"><option value="">Semua</option><option value="keluhan">Keluhan</option><option value="aspirasi">Aspirasi</option><option value="mental_health">Mental Health</option><option value="kritik">Kritik (lama)</option><option value="saran">Saran (lama)</option></select></div>
               <div className="space-y-1.5"><label className="label-sm text-[#525252]">TARGET</label><select value={filters.target||""} onChange={e=>onFilter("target",e.target.value)} className="w-full h-10 px-3 rounded-[12px] bg-white/70 border border-black/[0.06] text-[13px] backdrop-blur focus:outline-none focus:border-[#0A84FF] focus:ring-2 focus:ring-[#0A84FF]/20"><option value="">Semua</option><option value="jurusan">Jurusan</option><option value="himpunan">Himpunan</option></select></div>
             </div>
           )}

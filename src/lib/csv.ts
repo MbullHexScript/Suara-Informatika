@@ -20,7 +20,7 @@ export function generateCSV(reports: Report[]): string {
 export function generateSummary(reports: Report[]): string {
   const total = reports.length
   const byType = reports.reduce((acc, r) => { acc[r.type] = (acc[r.type] || 0) + 1; return acc }, {} as Record<string, number>)
-  const byTarget = reports.reduce((acc, r) => { acc[r.target] = (acc[r.target] || 0) + 1; return acc }, {} as Record<string, number>)
+  const byTarget = reports.reduce((acc, r) => { if (r.target) acc[r.target] = (acc[r.target] || 0) + 1; return acc }, {} as Record<string, number>)
   const baru = reports.filter((r) => r.status === "baru").length
   return `Ringkasan Laporan\nTotal: ${total}\nKeluhan: ${byType.keluhan || 0} | Kritik: ${byType.kritik || 0} | Saran: ${byType.saran || 0}\nJurusan: ${byTarget.jurusan || 0} | Himpunan: ${byTarget.himpunan || 0}\nBelum diproses (Baru): ${baru}`
 }

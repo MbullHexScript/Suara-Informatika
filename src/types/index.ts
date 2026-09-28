@@ -6,7 +6,9 @@ export type ReportCategory = 'Akademik' | 'Fasilitas' | 'Dosen/Pengajaran' | 'Ad
 export interface Report {
   id: string
   type: ReportType
-  target: ReportTarget
+  target: ReportTarget | null
+  name: string | null
+  contact: string | null
   category: ReportCategory | string
   title: string
   description: string
@@ -39,9 +41,10 @@ export interface PaginatedReports {
 
 export interface CreateReportPayload {
   type: ReportType
-  target: ReportTarget
-  category: string
-  title: string
+  target?: ReportTarget
+  category?: string
+  title?: string
+  name?: string
   description: string
   attachments?: string[]
   contact?: string | null

@@ -13,11 +13,19 @@ export default function AdminLogin(){
     e.preventDefault(); setErr(""); setLoading(true)
     const fd=new FormData(e.currentTarget)
     const email=String(fd.get("email")||""), password=String(fd.get("password")||"")
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    setLoading(false)
-    if(error){ setErr(error.message); return }
-    toast.success("Masuk berhasil")
-    nav("/admin",{replace:true})
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      if(error || !data.session){ setErr('Email atau password tidak sesuai.'); return }
+      const check = await fetch('/api/reports?per_page=1', {headers:{Authorization:'Bearer '+data.session.access_token}})
+      if(!check.ok) {
+        await supabase.auth.signOut()
+        setErr(check.status===401 ? 'Akun ini belum terdaftar sebagai pengelola website. Hubungi pemilik.' : 'Layanan pengelola belum dapat diakses. Coba lagi sebentar.')
+        return
+      }
+      toast.success("Masuk berhasil")
+      nav("/admin",{replace:true})
+    } catch { setErr('Tidak dapat terhubung. Periksa koneksi kamu.') }
+    finally { setLoading(false) }
   }
   return (
     <div className="bg-[#f9f9f9] text-[#1a1c1c] flex flex-col min-h-dvh">
