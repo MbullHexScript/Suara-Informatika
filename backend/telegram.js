@@ -3,7 +3,7 @@ import { appUrl, env, UUID, logError } from './core.js';
 import { normalizePhone } from './reports.js';
 
 export const hashToken = token => createHash('sha256').update(token).digest('hex');
-export const typeLabel = { keluhan: 'Keluhan', aspirasi: 'Aspirasi', mental_health: 'Mental Health', kritik: 'Kritik', saran: 'Saran' };
+export const typeLabel = { keluhan: 'Suara & Aspirasi', aspirasi: 'Suara & Aspirasi', mental_health: 'Mental Health', kritik: 'Kritik', saran: 'Saran' };
 const statusLabel = { baru: '🟡 Baru', diproses: '🔵 Diproses', selesai: '🟢 Selesai', ditolak: '🔴 Ditolak' };
 export function formatReport(r, detail = false) {
   const mental = r.type === 'mental_health';

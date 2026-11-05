@@ -1,267 +1,263 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
+  Asterisk,
   ArrowUpRight,
   ArrowDown,
-  HeartHandshake,
-  MessageSquare,
-  Lightbulb,
-  ShieldCheck,
+  ArrowRight,
+  Heart,
   Search,
-  AudioLines,
-  Check,
+  ShieldCheck,
+  MessageSquare,
   Plus,
+  AudioLines,
 } from "lucide-react";
-const services = [
-  {
-    type: "keluhan",
-    Icon: MessageSquare,
-    label: "01 / KELUHAN",
-    title: "Yang mengganjal, sampaikan.",
-    description:
-      "Kendala akademik, fasilitas, atau administrasi. Bantu kami memahami apa yang perlu dibenahi.",
-    action: "Sampaikan keluhan",
-  },
-  {
-    type: "aspirasi",
-    Icon: Lightbulb,
-    label: "02 / ASPIRASI",
-    title: "Ide kecil. Dampak berarti.",
-    description:
-      "Gagasanmu bisa jadi awal perubahan untuk jurusan dan himpunan yang lebih baik.",
-    action: "Bagikan ide",
-  },
-  {
-    type: "mental_health",
-    Icon: HeartHandshake,
-    label: "03 / RUANG CERITA",
-    title: "Tak harus dipendam sendiri.",
-    description:
-      "Ada ruang untuk ceritamu. Sampaikan apa yang kamu rasakan kepada tim pendamping.",
-    action: "Mulai bercerita",
-  },
-];
+
 export default function Home() {
+  const [ticket, setTicket] = useState("");
+  const navigate = useNavigate();
   return (
-    <div className="home-page">
-      <section className="home-hero container-wide">
-        <div className="hero-copy">
-          <p className="eyebrow">
-            <span className="presence-dot" /> RUANG MAHASISWA INFORMATIKA
-          </p>
+    <div className="studio-home">
+      <section className="studio-hero">
+        <div className="studio-hero-top">
+          <span className="mono-tag">SUARA INFORMATIKA / RUANG MAHASISWA</span>
+          <span className="hero-index">
+            EST. 2026 <span><ArrowUpRight /></span>
+          </span>
+        </div>
+        <div className="studio-headline">
           <h1>
-            Suara kecilmu.
+            JANGAN
             <br />
-            <span>Awal perubahan</span>
+            <span>CUMA</span>
             <br />
-            besar kita.
+            DIPENDAM<span className="headline-dot">.</span>
           </h1>
-          <p className="hero-description">
-            Kampus yang lebih baik dimulai dari keberanian untuk bicara.
-            Sampaikan keluhan, titipkan ide, atau temukan ruang untuk bercerita.
-          </p>
-          <div className="hero-actions">
-            <Link className="action-primary" to="/laporan">
-              Sampaikan suaramu <ArrowUpRight size={19} />
-            </Link>
-            <Link className="hero-track" to="/lacak">
-              <Search size={17} /> Lacak laporan
-            </Link>
-          </div>
-          <p className="hero-footnote">
-            <ShieldCheck size={16} /> Keluhan & aspirasi tanpa nama atau NIM.
-          </p>
-        </div>
-        <div className="hero-visual">
-          <div className="visual-top">
-            <span>BERSAMA, KITA BISA.</span>
-            <AudioLines size={24} />
-          </div>
-          <div className="hero-photo">
-            <img
-              src="/foto-hero.jpg"
-              alt="Kebersamaan mahasiswa saat matahari terbenam"
-              fetchPriority="high"
-            />
-            <div className="photo-caption">
-              <span>Setiap cerita punya tempat.</span>
-              <p>
-                Termasuk
-                <br />
-                <em>ceritamu.</em>
-              </p>
+          <div className="sound-object" aria-hidden="true">
+            <div className="sound-orbit" />
+            <div className="sound-orbit orbit-two" />
+            <div className="sound-core">
+              <AudioLines strokeWidth={1.2} />
             </div>
-          </div>
-          <div className="visual-bottom">
-            <span className="visual-avatar">
-              <HeartHandshake size={21} />
-            </span>
-            <p>
-              Didengar dengan empati.
-              <br />
-              <b>Ditindaklanjuti dengan peduli.</b>
-            </p>
-            <span className="visual-star">✳</span>
-          </div>
-          <div className="hero-stamp">
-            SUARAMU
-            <br />
-            <b>BERARTI.</b>
-            <ArrowUpRight size={20} />
+            <span className="sound-label">YOUR VOICE MATTERS</span>
+            <span className="sound-spark"><Asterisk /></span>
           </div>
         </div>
-      </section>
-      <div className="trust-strip">
-        <div className="container-wide">
-          <span>
-            <ShieldCheck size={18} /> Identitasmu tetap milikmu
-          </span>
-          <span>
-            <Search size={18} /> Perkembangan dapat dilacak
-          </span>
-          <span>
-            <HeartHandshake size={18} /> Dikelola tim pengurus
-          </span>
-          <a href="#layanan">
-            Temukan ruangmu <ArrowDown size={16} />
+        <div className="studio-hero-bottom">
+          <p>
+            Ada yang mengganjal? Punya gagasan?
+            <br />
+            Atau sekadar butuh tempat bercerita?
+            <br />
+            <strong>Di sini, suaramu punya ruang.</strong>
+          </p>
+          <Link to="/laporan" className="studio-main-cta">
+            Sampaikan sekarang <ArrowUpRight size={24} />
+          </Link>
+          <a className="explore-link" href="#ruang">
+            JELAJAHI RUANG <ArrowDown size={18} />
           </a>
         </div>
-      </div>
-      <section
-        id="layanan"
-        className="service-section container-wide"
-        aria-labelledby="services-heading"
-      >
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">PILIH RUANGMU</p>
-            <h2 id="services-heading">
-              Apa pun pesannya,
-              <br />
-              kami siap mendengarkan.
-            </h2>
-          </div>
-          <p>
-            Tak perlu menunggu jadi masalah besar.
-            <br />
-            Mulai dari hal yang berarti untukmu.
-          </p>
-        </div>
-        <div className="service-grid">
-          {services.map(({ type, Icon, label, title, description, action }) => (
-            <Link
-              key={type}
-              to={"/laporan?jenis=" + type}
-              className={"service-card service-" + type}
-            >
-              <div className="service-top">
-                <span>{label}</span>
-                <span className="service-icon">
-                  <Icon size={25} strokeWidth={1.6} />
-                </span>
-              </div>
-              <h3>{title}</h3>
-              <p>{description}</p>
-              <span className="service-action">
-                {action}
-                <span>
-                  <ArrowUpRight size={20} />
-                </span>
-              </span>
-            </Link>
+      </section>
+      <div className="voice-ribbon" aria-hidden="true">
+        <div>
+          {[0, 1, 2, 3].map((i) => (
+            <span key={i}>
+              DIDENGAR <b><Asterisk size={25}/></b> DIPAHAMI <b><Asterisk size={25}/></b> DITINDAKLANJUTI <b><Asterisk size={25}/></b>
+            </span>
           ))}
         </div>
-      </section>
-      <section className="process-section container-wide">
-        <div className="process-intro">
-          <p className="eyebrow">DARI PESAN KE PERUBAHAN</p>
+      </div>
+      <section id="ruang" className="rooms-section">
+        <div className="studio-section-title">
+          <span className="mono-tag">01 — PILIH RUANGMU</span>
           <h2>
-            Tiga langkah.
+            Dua ruang.
             <br />
-            Satu langkah maju.
+            Semuanya untukmu.
           </h2>
           <p>
-            Proses yang sederhana, agar kamu bisa fokus pada hal yang ingin
-            disampaikan.
+            Tidak perlu menyusun kata yang sempurna.
+            <br />
+            Mulai saja dari yang ingin kamu sampaikan.
           </p>
-          <Link to="/laporan" className="text-link">
-            Mulai sekarang <ArrowUpRight size={18} />
+        </div>
+        <div className="room-grid">
+          <Link to="/laporan?jenis=aspirasi" className="room-card room-voice">
+            <div className="room-card-top">
+              <span className="mono-tag">01 / KELUHAN + IDE + HARAPAN</span>
+              <MessageSquare size={28} />
+            </div>
+            <h3>
+              Suara &<br />
+              Aspirasi<span><ArrowUpRight /></span>
+            </h3>
+            <p>
+              Yang perlu diperbaiki dan yang ingin diwujudkan. Semua masukanmu,
+              dalam satu ruang.
+            </p>
+            <div className="room-tags">
+              <span>Akademik</span>
+              <span>Fasilitas</span>
+              <span>Kehidupan kampus</span>
+            </div>
+            <div className="room-card-bottom">
+              <span>Sampaikan pesanmu</span>
+              <ArrowUpRight />
+            </div>
+          </Link>
+          <Link
+            to="/laporan?jenis=mental_health"
+            className="room-card room-care"
+          >
+            <div className="room-card-top">
+              <span className="mono-tag">02 / UNTUK DIRIMU</span>
+              <Heart size={28} />
+            </div>
+            <h3>
+              Ruang
+              <br />
+              Cerita<span><Heart /></span>
+            </h3>
+            <p>
+              Kamu boleh merasa lelah. Ceritakan yang sedang kamu hadapi kepada
+              tim pendamping.
+            </p>
+            <div className="room-tags">
+              <span>Didengar dengan empati</span>
+              <span>Tanpa menghakimi</span>
+            </div>
+            <div className="room-card-bottom">
+              <span>Aku ingin bercerita</span>
+              <ArrowUpRight />
+            </div>
           </Link>
         </div>
-        <ol className="process-list">
-          {[
-            {
-              title: "Tulis dengan caramu.",
-              text: "Pilih jenis pesan, ceritakan konteksnya, dan tambahkan foto jika diperlukan.",
-            },
-            {
-              title: "Simpan nomor tiketmu.",
-              text: "Setelah terkirim, kamu mendapat tiket untuk memantau perkembangan laporan.",
-            },
-            {
-              title: "Beri ruang untuk tindak lanjut.",
-              text: "Tim pengurus menerima laporan dan memperbarui status penanganannya.",
-            },
-          ].map((step, i) => (
-            <li key={step.title}>
-              <span className="step-number">0{i + 1}</span>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.text}</p>
-              </div>
-              <Check size={19} />
-            </li>
-          ))}
-        </ol>
       </section>
-      <section className="care-banner container-wide">
-        <span className="care-art" aria-hidden="true">
-          <HeartHandshake size={58} strokeWidth={1} />
-        </span>
+      <section className="track-console">
         <div>
-          <p className="eyebrow">RUANG CERITA</p>
-          <h2>Kamu tidak harus selalu kuat.</h2>
-          <p>
-            Kalau hari ini terasa berat, mulai dari satu cerita. Kami ada untuk
-            mendengarkan.
-          </p>
+          <span className="mono-tag">SUDAH KIRIM PESAN?</span>
+          <h2>Ikuti jejak suaramu.</h2>
+          <p>Cek perkembangan laporan dengan nomor tiketmu.</p>
         </div>
-        <Link to="/laporan?jenis=mental_health" className="action-primary">
-          Aku ingin bercerita <ArrowUpRight size={18} />
-        </Link>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            navigate("/lacak/" + encodeURIComponent(ticket.trim()));
+          }}
+        >
+          <label htmlFor="home-ticket">Nomor tiket laporan</label>
+          <div>
+            <Search size={20} />
+            <input
+              id="home-ticket"
+              value={ticket}
+              onChange={(e) => setTicket(e.target.value)}
+              required
+              placeholder="Tempel nomor tiketmu"
+            />
+            <button aria-label="Lacak tiket">
+              <ArrowRight size={23} />
+            </button>
+          </div>
+          <Link to="/lacak">
+            Buka halaman pelacakan <ArrowUpRight size={13} />
+          </Link>
+        </form>
       </section>
-      <section className="faq-section container-wide">
-        <div>
-          <p className="eyebrow">SEBELUM MEMULAI</p>
+      <section className="studio-process">
+        <div className="studio-section-title">
+          <span className="mono-tag">02 — CARA KERJANYA</span>
           <h2>
-            Mungkin ini
+            Pesanmu punya
             <br />
-            yang kamu pikirkan.
+            langkah selanjutnya.
           </h2>
         </div>
-        <div className="faq-list">
+        <div className="studio-steps">
           {[
             {
-              q: "Apakah aku harus mencantumkan identitas?",
-              a: "Keluhan dan aspirasi tidak meminta nama, NIM, atau nomor kontak. Untuk Mental Health, nomor WhatsApp diperlukan agar tim dapat menindaklanjuti; nama bersifat opsional.",
+              n: "01",
+              title: "Ungkapkan.",
+              text: "Tulis keluhan, ide, atau ceritamu. Tambahkan konteks agar tim memahami.",
             },
             {
-              q: "Bagaimana cara mengetahui perkembangan laporan?",
-              a: "Simpan nomor tiket setelah mengirim laporan, lalu masukkan nomor tersebut di halaman Lacak. Kamu dapat melihat status terbaru tanpa login.",
+              n: "02",
+              title: "Simpan tiket.",
+              text: "Setiap laporan mendapatkan nomor tiket. Simpan untuk melihat perkembangannya.",
             },
             {
-              q: "Siapa yang dapat membaca ceritaku?",
-              a: "Detail laporan hanya dapat dibaca pengelola web dan anggota bot yang memiliki izin. Pelacakan publik hanya menampilkan informasi terbatas dan status laporan.",
+              n: "03",
+              title: "Pantau proses.",
+              text: "Pengurus membaca pesan dan memperbarui status tindak lanjut.",
             },
-          ].map((item) => (
-            <details key={item.q}>
+          ].map((x) => (
+            <article key={x.n}>
+              <span>{x.n}</span>
+              <ArrowUpRight size={24} />
+              <h3>{x.title}</h3>
+              <p>{x.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="studio-privacy">
+        <ShieldCheck size={32} />
+        <p>
+          <strong>Identitasmu tetap milikmu.</strong> Suara & Aspirasi tidak
+          meminta nama atau NIM. Ruang Cerita meminta WhatsApp untuk tindak
+          lanjut oleh tim yang berizin.
+        </p>
+        <span className="mono-tag">RESPECT YOUR PRIVACY ↗</span>
+      </section>
+      <section className="studio-faq">
+        <div>
+          <span className="mono-tag">03 — BIAR LEBIH JELAS</span>
+          <h2>
+            Masih{" "}
+            <br />
+            penasaran<span>?</span>
+          </h2>
+        </div>
+        <div>
+          {[
+            {
+              q: "Keluhan dan aspirasi sekarang jadi satu?",
+              a: "Ya. Gunakan Suara & Aspirasi untuk menyampaikan masalah, ide, kritik, maupun harapan. Tidak perlu memilih antara keluhan dan aspirasi.",
+            },
+            {
+              q: "Apakah perlu login untuk mengirim pesan?",
+              a: "Tidak. Kamu bisa langsung mengisi formulir. Simpan nomor tiket setelah pesan terkirim untuk memantau perkembangannya.",
+            },
+            {
+              q: "Siapa yang membaca pesanku?",
+              a: "Detail pesan dibaca pengelola web dan anggota bot yang memiliki izin. Halaman pelacakan publik hanya menampilkan informasi terbatas dan status laporan.",
+            },
+            {
+              q: "Bagaimana dengan laporan yang sudah pernah dikirim?",
+              a: "Laporan sebelumnya tetap bisa dilacak dengan nomor tiket yang sama. Keluhan dan aspirasi kini ditampilkan bersama oleh pengelola.",
+            },
+          ].map((x) => (
+            <details key={x.q}>
               <summary>
-                {item.q}
-                <Plus size={18} />
+                {x.q}
+                <Plus size={20} />
               </summary>
-              <p>{item.a}</p>
+              <p>{x.a}</p>
             </details>
           ))}
         </div>
+      </section>
+      <section className="studio-closing">
+        <span className="mono-tag">
+          BUKAN SEKADAR PESAN. INI AWAL PERUBAHAN.
+        </span>
+        <Link to="/laporan">
+          SEKARANG,
+          <br />
+          GILIRANMU.
+          <ArrowUpRight />
+        </Link>
       </section>
     </div>
   );

@@ -38,7 +38,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           <div className="footer-links">
             <Link to="/laporan">Sampaikan pesan</Link>
             <Link to="/lacak">Lacak laporan</Link>
-            <Link to="/admin/login">Ruang pengelola ↗</Link>
+            <Link to="/admin/login">Ruang pengelola</Link>
           </div>
           <p className="footer-credit">
             © 2026 Suara Informatika

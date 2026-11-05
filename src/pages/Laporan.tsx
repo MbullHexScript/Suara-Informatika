@@ -26,9 +26,8 @@ const categories = [
   "Lainnya",
 ];
 const options = [
-  { id: "keluhan", label: "Keluhan" },
-  { id: "aspirasi", label: "Aspirasi" },
-  { id: "mental_health", label: "Mental Health" },
+  { id: "aspirasi", label: "Suara & Aspirasi" },
+  { id: "mental_health", label: "Ruang Cerita" },
 ] as const;
 type Kind = (typeof options)[number]["id"];
 type Photo = { file: File; preview: string };
@@ -55,10 +54,9 @@ export default function Laporan() {
   const [params] = useSearchParams();
   const reduce = useReducedMotion();
   const [type, setType] = useState<Kind>(
-    () => options.find((o) => o.id === params.get("jenis"))?.id || "keluhan",
+    () => options.find((o) => o.id === params.get("jenis"))?.id || "aspirasi",
   );
   const [drafts, setDrafts] = useState<Record<Kind, Draft>>({
-    keluhan: blank(),
     aspirasi: blank(),
     mental_health: blank(),
   });
@@ -134,11 +132,9 @@ export default function Laporan() {
         const body = new FormData();
         body.append("file", photo.file);
         const r = await fetch("/api/upload", { method: "POST", body });
-        const j = await r
-          .json()
-          .catch(() => ({
-            error: "Unggahan gagal. Periksa koneksi dan ukuran foto.",
-          }));
+        const j = await r.json().catch(() => ({
+          error: "Unggahan gagal. Periksa koneksi dan ukuran foto.",
+        }));
         if (!r.ok) throw new Error(j.error);
         attachments.push(j.path);
       }
@@ -160,11 +156,9 @@ export default function Laporan() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const j = await r
-        .json()
-        .catch(() => ({
-          error: "Server belum merespons. Coba lagi sebentar.",
-        }));
+      const j = await r.json().catch(() => ({
+        error: "Server belum merespons. Coba lagi sebentar.",
+      }));
       if (!r.ok)
         throw new Error(
           j.error + (j.reference ? ` Kode bantuan: ${j.reference}` : ""),
@@ -230,12 +224,14 @@ export default function Laporan() {
       <header className="page-heading">
         <p>Suara Informatika</p>
         <h1>
-          {mental ? "Kamu punya ruang untuk bercerita." : "Mulai dari suaramu."}
+          {mental
+            ? "Kamu punya ruang untuk bercerita."
+            : "Bicarakan. Kita dengarkan."}
         </h1>
         <p>
           {mental
             ? "Ceritakan dengan caramu sendiri. Tim pengurus akan membaca dan mendampingimu."
-            : "Keluhan dan gagasanmu membantu kami melihat apa yang perlu diperbaiki."}
+            : "Satu tempat untuk keluhan, ide, dan harapanmu. Ceritakan apa yang perlu berubah."}
         </p>
       </header>
       <div className="report-layout">
@@ -395,7 +391,7 @@ export default function Laporan() {
                     onChange={(e) => change("title", e.target.value)}
                     placeholder={
                       type === "aspirasi"
-                        ? "Ide yang ingin kamu bagikan"
+                        ? "Keluhan atau ide yang ingin kamu sampaikan"
                         : "Contoh: AC ruang lab tidak berfungsi"
                     }
                   />

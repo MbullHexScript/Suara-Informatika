@@ -43,7 +43,9 @@ export function genCSV(reports) {
   return '\uFEFF' + [fields.join(','), ...reports.map(r => fields.map(k => quote(r[k])).join(','))].join('\r\n');
 }
 export function applyFilters(q, params = {}) {
-  for (const k of ['type', 'target', 'category', 'status']) if (params[k]) q = q.eq(k, params[k]);
+  if (params.type === 'aspirasi') q = q.in('type', ['keluhan', 'aspirasi']);
+  else if (params.type) q = q.eq('type', params.type);
+  for (const k of ['target', 'category', 'status']) if (params[k]) q = q.eq(k, params[k]);
   if (params.date_from) q = q.gte('created_at', params.date_from);
   if (params.date_to) q = q.lte('created_at', params.date_to + 'T23:59:59+08:00');
   if (params.search) q = q.ilike('title', '%' + String(params.search).replace(/[%_]/g, '').slice(0, 100) + '%');

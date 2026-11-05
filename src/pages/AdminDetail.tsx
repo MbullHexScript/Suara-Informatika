@@ -58,7 +58,7 @@ export default function AdminDetail(){
       <div className="container-wide py-6 space-y-6 max-w-[880px]">
         <div className="glass-card rounded-[16px] p-6 md:p-7 space-y-5 will-change-transform">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="label-sm px-3 py-1.5 rounded-full glass-pill capitalize">{data.type}</span>
+            <span className="label-sm px-3 py-1.5 rounded-full glass-pill capitalize">{['keluhan','aspirasi'].includes(data.type) ? 'Suara & Aspirasi' : data.type}</span>
             <span className="label-sm text-[#525252] inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{new Date(data.created_at).toLocaleString("id-ID")}</span>
           </div>
           <div>

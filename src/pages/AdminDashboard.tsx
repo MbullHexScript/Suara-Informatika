@@ -377,8 +377,7 @@ export default function AdminDashboard() {
                   className="w-full h-10 px-3 rounded-[12px] bg-white/70 border border-black/[0.06] text-[13px] backdrop-blur focus:outline-none focus:border-[#0A84FF] focus:ring-2 focus:ring-[#0A84FF]/20"
                 >
                   <option value="">Semua</option>
-                  <option value="keluhan">Keluhan</option>
-                  <option value="aspirasi">Aspirasi</option>
+                  <option value="aspirasi">Suara &amp; Aspirasi</option>
                   <option value="mental_health">Mental Health</option>
                   <option value="kritik">Kritik (lama)</option>
                   <option value="saran">Saran (lama)</option>
@@ -439,7 +438,9 @@ export default function AdminDashboard() {
                           </p>
                           <div className="flex items-center gap-1.5 mt-2">
                             <span className="label-sm text-[10px] px-2 py-1 rounded-full bg-white/70 border border-black/[0.06] backdrop-blur capitalize">
-                              {r.type}
+                              {["keluhan", "aspirasi"].includes(r.type)
+                                ? "Suara & Aspirasi"
+                                : r.type}
                             </span>
                             <span className="label-sm text-[10px] px-2 py-1 rounded-full bg-white/70 border border-black/[0.06] backdrop-blur capitalize">
                               {r.target}
