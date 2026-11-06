@@ -31,6 +31,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         <div className="container-wide footer-content">
           <div>
             <Link to="/" className="footer-brand">
+              <img className="organization-logo" src="/hmti-logo.jpg" alt="Logo HMTI UIN SMH Banten" width={46} height={46} />
               suara<span>informatika.</span>
             </Link>
             <p>Ruang untuk didengar. Langkah untuk perubahan.</p>

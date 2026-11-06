@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, AudioLines } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import {
   TubeLightNavbar,
   DesktopNav,
@@ -17,9 +17,7 @@ export default function Navbar() {
             className="brand"
             aria-label="Suara Informatika — beranda"
           >
-            <span className="brand-icon">
-              <AudioLines size={25} />
-            </span>
+            <img className="organization-logo" src="/hmti-logo.jpg" alt="Logo HMTI UIN SMH Banten" width={46} height={46} />
             <span>
               suara<span className="brand-sub">informatika.</span>
             </span>

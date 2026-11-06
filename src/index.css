@@ -2859,3 +2859,10 @@ body {
   .login-story { border-radius: 22px; }
   .studio-steps { gap: 12px; }
 }
+
+/* Keep the uploaded institution emblem complete and legible. */
+.organization-logo{display:block;width:46px;height:46px;flex-shrink:0;object-fit:contain;background:#f7f7f7;padding:3px;border-radius:12px}
+.footer-brand{display:inline-flex;align-items:center;gap:0}
+.footer-brand .organization-logo{margin-right:12px}
+.admin-app img[src="/hmti-logo.jpg"]{object-fit:contain;background:#f7f7f7;padding:2px}
+@media(max-width:767px){.brand .organization-logo{width:40px;height:40px;border-radius:11px}.brand{gap:9px}.footer-brand .organization-logo{width:42px;height:42px}}

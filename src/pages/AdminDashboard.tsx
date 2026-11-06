@@ -154,9 +154,9 @@ export default function AdminDashboard() {
         <div>
           <div className="p-7 flex items-center gap-3 border-b border-white/10">
             <img
-              src="/icon-web.jpg"
-              alt="Suara Informatika"
-              className="w-10 h-10 rounded-xl object-cover border border-white/15"
+              src="/hmti-logo.jpg"
+              alt="Logo HMTI UIN SMH Banten"
+              className="w-10 h-10 rounded-xl object-contain border border-white/15"
               width={40}
               height={40}
             />
@@ -223,9 +223,9 @@ export default function AdminDashboard() {
           <div className="h-[56px] flex items-center justify-between px-4 will-change-[backdrop-filter]">
             <div className="flex items-center gap-2.5">
               <img
-                src="/icon-web.jpg"
-                alt="Suara Informatika"
-                className="w-8 h-8 rounded-lg object-cover border border-black/[0.06]"
+                src="/hmti-logo.jpg"
+                alt="Logo HMTI UIN SMH Banten"
+                className="w-8 h-8 rounded-lg object-contain border border-black/[0.06]"
                 width={32}
                 height={32}
               />
