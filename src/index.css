@@ -2771,3 +2771,91 @@ body {
 }
 
 .room-card h3>span>svg{width:72px;height:72px;stroke-width:1.1}.sound-spark>svg{width:95px;height:95px;stroke-width:1.3}.voice-ribbon b>svg{display:block}.hero-index svg{width:20px;height:20px}@media(max-width:767px){.sound-spark>svg{width:58px;height:58px}.room-card h3>span>svg{width:55px;height:55px}.sound-label{right:0;bottom:20px}}
+
+/* Shared rounded surfaces across the public site and management screens. */
+:root {
+  --radius-control: 14px;
+  --radius-panel: 26px;
+  --radius-pill: 999px;
+}
+.site-header {
+  top: 10px;
+  margin: 12px 16px;
+  border-radius: var(--radius-panel);
+  box-shadow: 0 8px 28px #10172918;
+}
+.nav-material { width: calc(100% - 40px); height: 74px; }
+.brand-icon { border-radius: 12px; }
+.header-cta,
+.studio-main-cta,
+.action-primary,
+.action-secondary { border-radius: var(--radius-pill); }
+.desktop-nav .nav-item,
+.desktop-nav .nav-selection { border-radius: var(--radius-pill); }
+.desktop-nav .nav-selection { border-bottom: 0; }
+.room-card,
+.track-console,
+.glass-card,
+.report-form,
+.success-panel,
+.login-story,
+.login-layout > .glass-card,
+.dashboard-overview,
+.admin-app .glass-card { border-radius: var(--radius-panel); }
+.room-card { transition: transform .25s, box-shadow .25s; }
+.room-card:hover { box-shadow: 0 16px 36px #17191f14; }
+.report-form { box-shadow: 0 12px 35px #24395808; }
+.track-console form > div,
+.upload-zone,
+.ticket-box,
+.guide-note,
+.report-guide,
+.admin-contact { border-radius: 18px; }
+.track-console button { border-radius: var(--radius-control); }
+.segmented { border-radius: 18px; }
+.segmented button,
+.segment-active,
+.guide-icon,
+.tracking-symbol,
+.glass-pill,
+.admin-app .glass-pill,
+.dashboard-shell > aside nav a { border-radius: var(--radius-control); }
+.report-form input:not([type=file]):not([aria-hidden]),
+.report-form select,
+.report-form textarea,
+.admin-app input,
+.admin-app select,
+.admin-app textarea { border-radius: var(--radius-control); }
+.admin-app button,
+.admin-app a.bg-black,
+.login-layout form > button[type=submit] { border-radius: var(--radius-pill); }
+.studio-steps { border: 0; gap: 16px; }
+.studio-steps article,
+.studio-steps article:last-child {
+  border: 1px solid #d5dbe7;
+  border-radius: 22px;
+  background: #fff8;
+}
+@media (max-width: 767px) {
+  .site-header { top: 8px; margin: 10px; border-radius: 22px; }
+  .nav-material { width: calc(100% - 28px); height: 68px; gap: 10px; }
+  .header-cta { padding: 11px 13px; gap: 10px; }
+  .brand-icon { border-radius: 10px; }
+  .mobile-dock {
+    left: 12px;
+    right: 12px;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding: 7px;
+    border: 1px solid #ffffff20;
+    border-radius: 26px;
+    box-shadow: 0 8px 30px #080e2a38;
+  }
+  .mobile-dock .nav-item,
+  .mobile-dock .nav-selection { border-radius: 20px; }
+  .room-card,
+  .track-console,
+  .report-form,
+  .login-layout > .glass-card,
+  .login-story { border-radius: 22px; }
+  .studio-steps { gap: 12px; }
+}
